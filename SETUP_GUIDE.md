@@ -61,7 +61,7 @@ Done. Your kit is now at: **github.com/niklasleide/claude-project-starter**
 ## Step 4 — Add the global alias so you can run it from anywhere
 
 ```bash
-echo 'alias newproject="python ~/tools/claude-project-starter/new_project.py"' >> ~/.bashrc
+echo 'alias newproject="python3 ~/tools/claude-project-starter/new_project.py"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
