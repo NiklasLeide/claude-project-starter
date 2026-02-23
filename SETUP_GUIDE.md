@@ -6,13 +6,27 @@ One-time setup. After this, improving the kit = edit → commit → push. That's
 
 ## Step 1 — Move the kit to a permanent home on WSL2
 
+The zip was downloaded on Windows, so it lives on the Windows filesystem — not WSL2. You need to copy it across using the `/mnt/c/` path.
+
 ```bash
 mkdir -p ~/tools
-cp -r ~/Downloads/project-starter-v2 ~/tools/claude-project-starter
+
+# Your Windows Downloads folder is visible from WSL2 at /mnt/c/Users/nikla/Downloads/
+cp -r /mnt/c/Users/nikla/Downloads/project-starter-v2 ~/tools/claude-project-starter
+```
+
+> If that fails, check the exact folder name first:
+> ```bash
+> ls /mnt/c/Users/nikla/Downloads/ | grep project
+> ```
+
+```bash
 cd ~/tools/claude-project-starter
 ```
 
-> **Why `~/tools/`?** It's on the native WSL2 filesystem (not `/mnt/c/`), so git, permissions, and scripts all work correctly. You'll run this from here for every future project.
+> **Why `~/tools/` and not just leaving it in Downloads?**
+> The Windows filesystem at `/mnt/c/` doesn't support Linux permissions, symlinks, or git properly.
+> Always work on native WSL2 filesystem (`~/`) — this is the same issue documented in TROUBLESHOOTING.md.
 
 ---
 
