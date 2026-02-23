@@ -538,6 +538,69 @@ _Decisions against features — include a one-line reason so you don't revisit t
 ---
 """)
 
+    # ── MAINTENANCE.md ─────────────────────────────────────────
+    write_file(os.path.join(d, "docs", "MAINTENANCE.md"), f"""\
+# Maintenance — {p}
+
+> Fill this in as you go. It's the file you'll thank yourself for when returning after months away.
+> Run /project:resume when returning — it reads this file first.
+
+## How to run this project
+
+```bash
+# 1. Navigate to project
+cd {d}
+
+# 2. Activate environment (if applicable)
+# source ~/venv-{p}/bin/activate   ← Python venv
+# nvm use 18                        ← Node version
+
+# 3. Set up environment variables
+cp .env.example .env
+# Edit .env and fill in real values
+
+# 4. Install dependencies
+# pip install -r requirements.txt   ← Python
+# npm install                        ← Node
+
+# 5. Start the app
+# [fill in your start command]
+```
+
+## Environment variables needed
+| Variable | Where to get it | Required? |
+|----------|----------------|-----------|
+| `API_KEY` | [service dashboard] | Yes |
+
+## Dependencies and versions
+| Tool/Library | Version | Notes |
+|-------------|---------|-------|
+| Python/Node | [version] | |
+
+## Known environment quirks
+<!-- Things that will bite you when setting up fresh -->
+- [Fill in as you discover them]
+
+## How to update dependencies safely
+```bash
+# Python:
+pip list --outdated
+pip install --upgrade [package]  # upgrade one at a time, test after each
+
+# Node:
+npm outdated
+npm update [package]
+```
+
+## Last parked
+<!-- Updated automatically by /project:parkhere -->
+_Not yet parked_
+
+---
+> Update the "How to run" section the moment you figure out the setup.
+> Do it while it's fresh — not when you're returning cold in 3 months.
+""")
+
     # ── .gitignore ─────────────────────────────────────────────
     write_file(os.path.join(d, ".gitignore"), """\
 .env
@@ -674,12 +737,73 @@ Then help me:
 
 Challenge scope. One session = one focused thing.
 """,
+
+        "resume.md": """Cold project restart. I have been away for weeks or months. Work through these steps in order.
+
+## Step 1 — Orient (read silently, do not output full files)
+Read these files:
+- @docs/PROJECT_STATUS.md
+- @docs/DECISIONS.md (last 3 entries only)
+- @docs/CHANGELOG.md (last 5 entries only)
+- @docs/MAINTENANCE.md
+
+Then tell me in plain language:
+- What was the last thing completed
+- What was I about to do next
+- Any known blockers or open questions left behind
+- How long ago the last commit was (run: git log -1 --format="%ar")
+
+## Step 2 — Environment check
+Run these and report what fails:
+1. Check for the start command in MAINTENANCE.md or CLAUDE.md — try running it
+2. Check outdated dependencies (Python: pip list --outdated | head -10 / Node: npm outdated)
+3. Run: git status — any uncommitted changes left behind?
+4. Check .env exists and is not empty
+
+Report failures before touching any code.
+
+## Step 3 — Triage
+Ask me: "What brings you back — new feature, bug fix, or maintenance?"
+Wait for my answer. Do not start coding until I confirm.
+""",
+
+        "parkhere.md": """I am parking this project. Do all of these before I close:
+
+1. Run: git status
+   If uncommitted changes exist — commit them first with a descriptive message.
+
+2. Update @docs/PROJECT_STATUS.md:
+   - Set all 🔄 in-progress tasks to accurate status
+   - Add a "Parked on [date]:" note at the very top with:
+     what is working, what was next, any gotchas to remember on return
+   - Update "Last updated" date
+
+3. Update @docs/CHANGELOG.md with today's changes
+
+4. Check @docs/TROUBLESHOOTING.md — any new issues hit this session? Add them now.
+
+5. Check @docs/DECISIONS.md — any architectural choices made? Log them now.
+
+6. Update @docs/MAINTENANCE.md "Last parked" section with today's date and one-line state summary.
+
+7. Final push:
+   git add docs/
+   git commit -m "docs: park project — [one line summary]"
+   git push
+
+8. Tell me the exact commands to resume next time:
+   cd [project dir] && code .
+   then in VS Code terminal: claude
+   then: /project:resume
+
+Do not skip steps. This is what makes returning in 3 months painless.
+""",
     }
 
     for fname, content in commands.items():
         write_file(os.path.join(cmd_dir, fname), content)
 
-    ok("5 slash commands created")
+    ok("8 slash commands created")
     print(f"  {C.DIM}/project:brief   — token-efficient session start")
     print(f"  /project:status  — read-only project overview")
     print(f"  /project:decide  — guided ADR (Claude challenges first)")
@@ -846,6 +970,8 @@ def finish(cfg):
   {C.CYAN}/project:review{C.RESET}  Critical code review
   {C.CYAN}/project:log{C.RESET}     Update changelog + status from git
   {C.CYAN}/project:scope{C.RESET}   Scope a new feature + draft GitHub issue
+  {C.CYAN}/project:parkhere{C.RESET} End-of-session — commit, update docs, leave clean
+  {C.CYAN}/project:resume{C.RESET}  Return after weeks/months — orient + environment check
 
 {C.BOLD}GitHub:{C.RESET}
   {C.CYAN}https://github.com/{u}/{p}{C.RESET}
