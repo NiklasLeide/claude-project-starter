@@ -823,11 +823,21 @@ def finish(cfg):
     print(f"╚══════════════════════════════════════════════════╝{C.RESET}")
 
     print(f"""
-{C.BOLD}Next steps:{C.RESET}
-  1.  cd {d}
-  2.  Fill in CLAUDE.md → add your run/test commands
-  3.  Open Claude Code: {C.CYAN}claude{C.RESET}
-  4.  Run: {C.CYAN}/project:brief{C.RESET}  ← loads context, asks what you're building
+{C.BOLD}Step 1 — Open in VS Code:{C.RESET}
+  {C.CYAN}code {d}{C.RESET}
+  (Opens VS Code connected to WSL2 — edit CLAUDE.md, docs/, everything from there)
+
+{C.BOLD}Step 2 — Fill in CLAUDE.md:{C.RESET}
+  Add your run/test/build commands under the Commands section.
+  VS Code: Ctrl+P → type CLAUDE.md → open it.
+
+{C.BOLD}Step 3 — Start Claude Code:{C.RESET}
+  In VS Code: open the integrated terminal (Ctrl+`) then:
+  {C.CYAN}claude{C.RESET}
+
+{C.BOLD}Step 4 — First prompt:{C.RESET}
+  {C.CYAN}/project:brief{C.RESET}
+  Claude reads your docs and asks what you're building today.
 
 {C.BOLD}Slash commands:{C.RESET}
   {C.CYAN}/project:brief{C.RESET}   Start-of-session briefing (token-efficient)
@@ -840,8 +850,8 @@ def finish(cfg):
 {C.BOLD}GitHub:{C.RESET}
   {C.CYAN}https://github.com/{u}/{p}{C.RESET}
 
-{C.YELLOW}Token tip: One feature per Claude session. Use /project:brief at the start,
-/project:log at the end. Never paste file contents — use @path instead.{C.RESET}
+{C.YELLOW}Tip: One feature per Claude session. /project:brief to start, /project:log to end.
+Never paste file contents into Claude — use @path instead.{C.RESET}
 """)
 
 # ── Main ───────────────────────────────────────────────────────
