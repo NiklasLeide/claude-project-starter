@@ -34,7 +34,10 @@ STACK_PRESETS = {
     "3": ("Python / Script/CLI", "Python, argparse/click"),
     "4": ("Node.js / TypeScript", "Node.js, TypeScript, Express"),
     "5": ("Node.js / Next.js", "Node.js, TypeScript, Next.js, React"),
-    "6": ("Other / Mixed", None),  # will ask
+    "6": ("React / Tauri desktop app", "React 19, TypeScript, Vite, Tailwind CSS, Tauri"),
+    "7": ("Java / Spring Boot", "Java 21, Spring Boot 3, Maven, Docker"),
+    "8": ("Java / Vert.x", "Java 21, Vert.x, Maven, Docker"),
+    "9": ("Other / Mixed", None),  # will ask
 }
 
 # ── GitHub labels ──────────────────────────────────────────────
@@ -95,25 +98,20 @@ To connect this script to GitHub you need a Personal Access Token (PAT).
 Here's how to create one — takes about 60 seconds:
 
   {C.BOLD}Step 1:{C.RESET} Open this URL in your browser:
-          {C.CYAN}https://github.com/settings/tokens?type=beta{C.RESET}
-          (Fine-grained tokens — more secure than classic tokens)
+          {C.CYAN}https://github.com/settings/tokens{C.RESET}
+          (Classic tokens — more reliable for repo creation)
 
-  {C.BOLD}Step 2:{C.RESET} Click {C.BOLD}"Generate new token"{C.RESET}
+  {C.BOLD}Step 2:{C.RESET} Click {C.BOLD}"Generate new token (classic)"{C.RESET}
 
   {C.BOLD}Step 3:{C.RESET} Fill in:
-          • Token name: {C.DIM}project-starter-kit{C.RESET}
+          • Note: {C.DIM}project-starter-kit{C.RESET}
           • Expiration: {C.DIM}No expiration{C.RESET} (or 1 year — your call)
-          • Repository access: {C.DIM}All repositories{C.RESET}
 
-  {C.BOLD}Step 4:{C.RESET} Under {C.BOLD}Permissions → Repository permissions{C.RESET}, set:
-          • Contents:       {C.DIM}Read and write{C.RESET}
-          • Issues:         {C.DIM}Read and write{C.RESET}
-          • Metadata:       {C.DIM}Read-only (auto-set){C.RESET}
+  {C.BOLD}Step 4:{C.RESET} Under {C.BOLD}Select scopes{C.RESET}, tick:
+          • {C.DIM}repo{C.RESET}          ← full repo access (creates repos, issues, labels)
+          • {C.DIM}project{C.RESET}       ← needed for GitHub Project boards
 
-  {C.BOLD}Step 5:{C.RESET} Under {C.BOLD}Permissions → Account permissions{C.RESET}, set:
-          • Projects:       {C.DIM}Read and write{C.RESET}  ← needed for Project boards
-
-  {C.BOLD}Step 6:{C.RESET} Click {C.BOLD}"Generate token"{C.RESET} and {C.YELLOW}copy it immediately{C.RESET}
+  {C.BOLD}Step 5:{C.RESET} Click {C.BOLD}"Generate token"{C.RESET} and {C.YELLOW}copy it immediately{C.RESET}
           (GitHub only shows it once)
 """)
 
