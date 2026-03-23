@@ -7,7 +7,7 @@ echo.
 
 set i=0
 
-:: Collect from ~/projects/ (WSL home)
+:: Collect from ~/projects/
 for /f "tokens=*" %%d in ('wsl ls ~/projects/ 2^>nul') do (
     set /a i+=1
     set "proj[!i!]=%%d"
@@ -16,14 +16,35 @@ for /f "tokens=*" %%d in ('wsl ls ~/projects/ 2^>nul') do (
     echo   !i!. %%d
 )
 
-:: Collect from Windows projects folder, skip duplicates
+:: Collect from /mnt/c/Users/nikla/projects/, skip duplicates
 for /f "tokens=*" %%d in ('wsl ls /mnt/c/Users/nikla/projects/ 2^>nul') do (
     if not defined seen_%%d (
         set /a i+=1
         set "proj[!i!]=%%d"
         set "path[!i!]=/mnt/c/Users/nikla/projects/%%d"
+        set "seen_%%d=1"
         echo   !i!. %%d
     )
+)
+
+:: Collect from ~/tools/, skip duplicates
+for /f "tokens=*" %%d in ('wsl ls ~/tools/ 2^>nul') do (
+    if not defined seen_%%d (
+        set /a i+=1
+        set "proj[!i!]=%%d"
+        set "path[!i!]=~/tools/%%d"
+        set "seen_%%d=1"
+        echo   !i!. %%d
+    )
+)
+
+:: Add ~/lifecoach-app-repo as a named entry, skip if duplicate
+if not defined seen_lifecoach-app-repo (
+    set /a i+=1
+    set "proj[!i!]=lifecoach-app-repo"
+    set "path[!i!]=~/lifecoach-app-repo"
+    set "seen_lifecoach-app-repo=1"
+    echo   !i!. lifecoach-app-repo
 )
 
 if %i%==0 (
