@@ -254,6 +254,37 @@ def create_structure(cfg):
     ]
     for d in dirs:
         Path(d).mkdir(parents=True, exist_ok=True)
+
+    # commit.sh — enforced commit workflow
+    commit_sh_path = os.path.join(cfg["target_dir"], "commit.sh")
+    Path(commit_sh_path).write_text(
+'''#!/bin/bash
+# commit.sh — enforced commit workflow
+# Usage: ./commit.sh "your commit message"
+# Auto-stages docs/, src/, config files. Blocks commit if CHANGELOG not updated with src/ changes.
+
+set -e
+
+if [ -z "$1" ]; then
+  echo 'Usage: ./commit.sh "commit message"' && exit 1
+fi
+
+git add docs/ src/ .claude/ 2>/dev/null || true
+git add *.json *.ts *.js *.sh *.md *.toml *.py 2>/dev/null || true
+
+SRC_CHANGED=$(git diff --cached --name-only | grep "^src/" || true)
+CHANGELOG_CHANGED=$(git diff --cached --name-only | grep "CHANGELOG.md" || true)
+
+if [ -n "$SRC_CHANGED" ] && [ -z "$CHANGELOG_CHANGED" ]; then
+  echo "ERROR: src/ changed but CHANGELOG.md was not updated. Update it first."
+  exit 1
+fi
+
+git commit -m "$1" && git push
+''', encoding="utf-8")
+    import stat as stat_mod
+    os.chmod(commit_sh_path, os.stat(commit_sh_path).st_mode | stat_mod.S_IEXEC | stat_mod.S_IXGRP | stat_mod.S_IXOTH)
+    ok("commit.sh")
     ok(f"Folders created at {cfg['target_dir']}")
 
 # ── Step 3: Write all .md files ───────────────────────────────
@@ -289,11 +320,10 @@ These files ARE Claude's memory between sessions. Keep them accurate.
 
 ## Commands
 ```bash
-# Fill in your run/test/build commands here after setup
-# e.g.:
-# python -m uvicorn main:app --reload   ← start dev server
-# pytest tests/                         ← run tests
-# python scripts/setup.py               ← first-time setup
+# Fill in your actual start command:
+# npm run dev / npm run tauri dev / python -m uvicorn main:app --reload
+# npx tsc --noEmit          # type check (if TypeScript)
+./commit.sh "message"       # ALWAYS use this to commit — never bare git commit
 ```
 
 ## Architecture
@@ -314,12 +344,15 @@ See `@docs/DECISIONS.md` for all architectural decisions and reasoning.
 ```
 
 ## Commit Rule (non-negotiable)
-**After every completed task:** `git add`, `git commit`, `git push`.
-Every commit must include updated `PROJECT_STATUS.md` if tasks changed state.
-If a decision was made: update `DECISIONS.md`.
-If a bug was hit and fixed: update `TROUBLESHOOTING.md`.
+**Always use `./commit.sh "message"` — never bare `git commit`.**
+The script auto-stages docs/, src/, config files and blocks commits if CHANGELOG.md
+isn't updated when src/ changed.
 
-Use `./commit.sh` if it exists — it walks through the checklist.
+Before every commit, update:
+- `docs/CHANGELOG.md` — always, for every code change
+- `docs/PROJECT_STATUS.md` — if any task changed state
+- `docs/DECISIONS.md` — if an architectural decision was made
+- `docs/TROUBLESHOOTING.md` — if a bug was hit and fixed
 
 ## Coding Conventions
 - Prefer simple and readable over clever
@@ -327,6 +360,15 @@ Use `./commit.sh` if it exists — it walks through the checklist.
 - All errors logged, never silently swallowed
 - Environment variables via `.env` (never committed — use `.env.example`)
 - When a pattern exists in the codebase, follow it; ask before deviating
+
+## Design System (if applicable)
+If this project has a UI, create a design tokens file as single source of truth
+for colours, typography, spacing. All components import from it — no hardcoded
+values in component files.
+
+## Data Migration (if applicable)
+If this project stores data locally, use a schema version number from day one.
+Every data structure change gets a migration. Bump schema version with every migration.
 
 ## Claude's Role
 You are a **critical friend**, not a yes-machine.
@@ -340,9 +382,12 @@ You are a **critical friend**, not a yes-machine.
 - Scope each session to ONE feature or ONE bug — push back if asked to do more
 
 ## What Claude Gets Wrong on This Project
-<!-- HIGHEST VALUE SECTION — fill in after your first 2-3 sessions -->
-<!-- Example: "Tends to create new files instead of extending existing ones" -->
-- TBD
+<!-- Update this as you discover patterns — highest-value section -->
+- Forgets to update docs — enforced by commit.sh, but verify before committing
+- Says "done" before verifying — always run tests/type-check before declaring done
+- Burns tokens on planning when task is already scoped — just execute
+- Creates giant files (>300 lines) — propose a split before implementing
+- Drifts from visual specs over multiple sprints — use design tokens file as code
 """)
 
     # ── DECISIONS.md ───────────────────────────────────────────
@@ -540,7 +585,8 @@ _Decisions against features — include a one-line reason so you don't revisit t
     write_file(os.path.join(d, "docs", "MAINTENANCE.md"), f"""\
 # Maintenance — {p}
 
-> Fill this in as you go. It's the file you'll thank yourself for when returning after months away.
+> Fill this in THE MOMENT you get the project running. Not later. Now.
+> If you can't run the project from these instructions alone, they're not done yet.
 > Run /project:resume when returning — it reads this file first.
 
 ## How to run this project
@@ -574,6 +620,10 @@ cp .env.example .env
 | Tool/Library | Version | Notes |
 |-------------|---------|-------|
 | Python/Node | [version] | |
+
+## Data file locations
+<!-- Where does this app store its data? -->
+- _Fill in: e.g., %APPDATA%/com.myapp/data.json, ~/.config/myapp/, sqlite.db_
 
 ## Known environment quirks
 <!-- Things that will bite you when setting up fresh -->
@@ -716,7 +766,11 @@ End-of-session update. Do all of these:
 4. If a new decision was made this session: remind me to run /project:decide before closing
 5. If a new bug was hit and fixed: add it to @docs/TROUBLESHOOTING.md
 
-Then: `git add docs/ && git commit -m "docs: session update [date]" && git push`
+4. Update @docs/ROADMAP.md — mark any completed items as done
+5. If a new decision was made: remind me to run /project:decide
+6. If a new bug was hit and fixed: add it to @docs/TROUBLESHOOTING.md
+
+Then: `./commit.sh "docs: session update [date]"`
 """,
 
         "scope.md": """\
@@ -784,15 +838,13 @@ Wait for my answer. Do not start coding until I confirm.
 
 6. Update @docs/MAINTENANCE.md "Last parked" section with today's date and one-line state summary.
 
-7. Final push:
-   git add docs/
-   git commit -m "docs: park project — [one line summary]"
-   git push
+7. Final commit:
+   ./commit.sh "docs: park project — [one line summary]"
 
 8. Tell me the exact commands to resume next time:
    cd [project dir] && code .
    then in VS Code terminal: claude
-   then: /project:resume
+   then: /resume
 
 Do not skip steps. This is what makes returning in 3 months painless.
 """,
