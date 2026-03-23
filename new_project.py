@@ -26,6 +26,7 @@ except ImportError:
 # ── Config — edit these defaults ──────────────────────────────
 DEFAULT_GITHUB_USER = "niklasleide"
 DEFAULT_PROJECTS_DIR = str(Path.home() / "projects")
+WINDOWS_PROJECTS_DIR = "/mnt/c/Users/nikla/projects"
 
 # ── Stack presets ──────────────────────────────────────────────
 STACK_PRESETS = {
@@ -197,8 +198,9 @@ def collect_info():
     github_user_input = ask(f"GitHub username (Enter to use '{DEFAULT_GITHUB_USER}'):")
     github_user = github_user_input or DEFAULT_GITHUB_USER
 
-    # Target directory
-    default_dir = os.path.join(DEFAULT_PROJECTS_DIR, project_name)
+    # Target directory — Tauri projects go to Windows filesystem
+    projects_base = WINDOWS_PROJECTS_DIR if stack_choice == "6" else DEFAULT_PROJECTS_DIR
+    default_dir = os.path.join(projects_base, project_name)
     dir_input = ask(f"Project directory (Enter for {default_dir}):")
     target_dir = dir_input or default_dir
     target_dir = os.path.expanduser(target_dir)
