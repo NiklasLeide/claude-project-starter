@@ -5,14 +5,29 @@ echo.
 echo  === Projects ===
 echo.
 
-:: Collect unique folder names from both project directories via WSL
-:: Output format: name|path (path is the directory the folder lives in)
 set i=0
-for /f "tokens=1,2 delims=|" %%a in ('wsl bash -c "( for d in ~/projects/*/; do [ -d \"$d\" ] && basename \"$d\"; done; for d in /mnt/c/Users/nikla/projects/*/; do [ -d \"$d\" ] && basename \"$d\"; done ) | sort -u | while read name; do if [ -d ~/projects/\"$name\" ]; then echo \"$name|~/projects/$name\"; else echo \"$name|/mnt/c/Users/nikla/projects/$name\"; fi; done"') do (
+
+:: Collect from ~/projects/ (WSL home)
+for /f "tokens=*" %%d in ('wsl ls ~/projects/ 2^>nul') do (
     set /a i+=1
-    set "proj[!i!]=%%a"
-    set "path[!i!]=%%b"
-    echo   !i!. %%a
+    set "proj[!i!]=%%d"
+    set "path[!i!]=~/projects/%%d"
+    set "seen_%%d=1"
+    echo   !i!. %%d
+)
+
+:: Collect from Windows projects folder, skip duplicates
+for /f "tokens=*" %%d in ('wsl ls /mnt/c/Users/nikla/projects/ 2^>nul') do (
+    if not defined seen_%%d (
+        set /a i+=1
+        set "proj[!i!]=%%d"
+        set "path[!i!]=/mnt/c/Users/nikla/projects/%%d"
+        echo   !i!. %%d
+    )
+)
+
+if %i%==0 (
+    echo   No projects found.
 )
 
 echo.
