@@ -41,6 +41,19 @@ STACK_PRESETS = {
     "9": ("Other / Mixed", None),  # will ask
 }
 
+# ── Test command per stack ────────────────────────────────────
+STACK_TEST_COMMANDS = {
+    "1": "pytest",                    # Python / FastAPI
+    "2": "pytest",                    # Python / FastAPI + SQLite
+    "3": "pytest",                    # Python / Script/CLI
+    "4": "npx jest",                  # Node.js / TypeScript
+    "5": "npx jest",                  # Node.js / Next.js
+    "6": "npx vitest",               # React / Tauri desktop app
+    "7": "mvn test",                  # Java / Spring Boot
+    "8": "mvn test",                  # Java / Vert.x
+    "9": None,                        # Other — filled in by /project:init
+}
+
 # ── GitHub labels ──────────────────────────────────────────────
 GITHUB_LABELS = [
     ("feature",    "0e8a16", "New functionality"),
@@ -233,10 +246,13 @@ def collect_info():
     if confirm != "y":
         err("Aborted.")
 
+    test_cmd = STACK_TEST_COMMANDS.get(stack_choice)
+
     return {
         "project_name": project_name,
         "desc": desc,
         "tech_stack": tech_stack,
+        "test_cmd": test_cmd,
         "github_user": github_user,
         "target_dir": target_dir,
         "create_github": create_github,
@@ -347,8 +363,15 @@ def create_docs(cfg):
     p = cfg["project_name"]
     today = cfg["today"]
     stack = cfg["tech_stack"]
+    test_cmd = cfg.get("test_cmd")
     user = cfg["github_user"]
     desc = cfg["desc"]
+
+    # Build test command line for CLAUDE.md
+    if test_cmd:
+        test_line = f"{test_cmd:<27}# run tests"
+    else:
+        test_line = "# [test command TBD — fill in via /project:init]"
 
     # ── CLAUDE.md ──────────────────────────────────────────────
     write_file(os.path.join(d, "CLAUDE.md"), f"""\
@@ -370,8 +393,8 @@ These files ARE Claude's memory between sessions. Keep them accurate.
 
 ## Commands
 ```bash
-# ⚠️ NOT YET FILLED IN — first task is to define these
-# Run /project:init to fill in stack, run, test, and dev commands
+# ⚠️ Run /dev command NOT YET FILLED IN — fill in via /project:init
+{test_line}
 ./commit.sh "message"       # ALWAYS use this to commit — never bare git commit
 ```
 
@@ -919,8 +942,32 @@ Do not skip steps. This is what makes returning in 3 months painless.
     print(f"  /project:scope   — new feature scoping + issue draft{C.RESET}")
 
 # ── Step 5: Git init ───────────────────────────────────────────
+def ensure_git_identity():
+    """Check git user.name and user.email are set globally; prompt if not."""
+    name = run("git config --global user.name", check=False).stdout.strip()
+    email = run("git config --global user.email", check=False).stdout.strip()
+
+    if not name:
+        warn("Git user.name is not configured globally.")
+        name = ask("Your full name for git commits:")
+        if name:
+            run(f'git config --global user.name "{name}"')
+            ok(f"Set git user.name = {name}")
+        else:
+            err("Git user.name is required for commits.")
+
+    if not email:
+        warn("Git user.email is not configured globally.")
+        email = ask("Your email for git commits:")
+        if email:
+            run(f'git config --global user.email "{email}"')
+            ok(f"Set git user.email = {email}")
+        else:
+            err("Git user.email is required for commits.")
+
 def init_git(cfg):
     header("Initializing git")
+    ensure_git_identity()
     d = cfg["target_dir"]
     run("git init -q", cwd=d)
     run("git add .", cwd=d)
@@ -1053,24 +1100,26 @@ def finish(cfg):
     print(f"║  ✓ Ready: {p:<39}║")
     print(f"╚══════════════════════════════════════════════════╝{C.RESET}")
 
+    # Auto-launch VS Code
+    print(f"\n  Opening {p} in VS Code...")
+    run(f"code --new-window {d}", check=False)
+
     print(f"""
 {C.BOLD}Global settings:{C.RESET}
   {C.CYAN}~/.claude/CLAUDE.md{C.RESET} — coding conventions, commit rule, Claude communication prefs
   (Applies to all projects. Project CLAUDE.md overrides where needed.)
 
-{C.BOLD}Step 1 — Open in VS Code:{C.RESET}
-  {C.CYAN}code {d}{C.RESET}
-
-{C.BOLD}Step 2 — Start Claude Code:{C.RESET}
+{C.BOLD}Step 1 — Start Claude Code:{C.RESET}
+  In the VS Code terminal that just opened:
   {C.CYAN}claude{C.RESET}
 
-{C.BOLD}Step 3 — Run /project:init FIRST:{C.RESET}
+{C.BOLD}Step 2 — Run /project:init FIRST:{C.RESET}
   {C.CYAN}/project:init{C.RESET}
   {C.YELLOW}This is required before anything else.{C.RESET}
   It asks for your stack, run/test/dev commands, and writes them into CLAUDE.md
   and MAINTENANCE.md so every future session knows how to run your project.
 
-{C.BOLD}Step 4 — Then start working:{C.RESET}
+{C.BOLD}Step 3 — Then start working:{C.RESET}
   {C.CYAN}/project:brief{C.RESET}
   Claude reads your docs and asks what you're building today.
 
