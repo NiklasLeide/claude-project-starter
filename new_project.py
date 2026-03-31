@@ -309,11 +309,12 @@ def create_docs(cfg):
 
 {desc}
 
-**Stack:** {stack}
+**Stack:** TBD ⚠️ — resolve this in first session
 **Started:** {today}
 **GitHub:** github.com/{user}/{p}
 
 ## Session Start — ALWAYS do this first
+0. If Stack or Commands say TBD or unfilled — stop and resolve before anything else.
 1. Read `@docs/PROJECT_STATUS.md` — understand current state
 2. Read `@docs/DECISIONS.md` — don't propose changes that contradict past decisions
 3. Check `@docs/TROUBLESHOOTING.md` before proposing solutions to errors
@@ -322,9 +323,8 @@ These files ARE Claude's memory between sessions. Keep them accurate.
 
 ## Commands
 ```bash
-# Fill in your actual start command:
-# npm run dev / npm run tauri dev / python -m uvicorn main:app --reload
-# npx tsc --noEmit          # type check (if TypeScript)
+# ⚠️ NOT YET FILLED IN — first task is to define these
+# Run /project:init to fill in stack, run, test, and dev commands
 ./commit.sh "message"       # ALWAYS use this to commit — never bare git commit
 ```
 
@@ -792,6 +792,41 @@ Then help me:
 Challenge scope. One session = one focused thing.
 """,
 
+        "init.md": """\
+First-session initialization. Run this BEFORE doing anything else in a new project.
+
+## Step 1 — Collect project details
+
+Ask me these questions one at a time. Wait for each answer before asking the next:
+
+1. What is the tech stack? (languages, frameworks, key libraries)
+2. What is the command to run the app? (e.g. `npm run dev`, `python main.py`)
+3. What is the command to run tests? (e.g. `npm test`, `pytest`)
+4. What is the dev server command, if different from the run command? (e.g. `npm run dev`, `uvicorn main:app --reload`)
+
+## Step 2 — Update CLAUDE.md
+
+Open CLAUDE.md and replace the Stack and Commands sections with the real values:
+
+- Replace `**Stack:** TBD ⚠️ — resolve this in first session` with the actual stack
+- Replace the Commands block — remove the ⚠️ comment and fill in the real commands:
+  ```bash
+  [run command]              # start the app
+  [test command]             # run tests
+  [dev server command]       # dev server (if applicable)
+  ./commit.sh "message"      # ALWAYS use this to commit — never bare git commit
+  ```
+
+## Step 3 — Check MAINTENANCE.md
+
+Read @docs/MAINTENANCE.md. If the "How to run this project" section still has placeholder comments like `# [fill in your start command]`, update it with the real commands from Step 1.
+
+## Step 4 — Confirm
+
+Show me what was written to both files so I can verify. Then say:
+"Project initialized. Run /project:brief to start your first session."
+""",
+
         "resume.md": """Cold project restart. I have been away for weeks or months. Work through these steps in order.
 
 ## Step 1 — Orient (read silently, do not output full files)
@@ -855,8 +890,9 @@ Do not skip steps. This is what makes returning in 3 months painless.
     for fname, content in commands.items():
         write_file(os.path.join(cmd_dir, fname), content)
 
-    ok("8 slash commands created")
-    print(f"  {C.DIM}/project:brief   — token-efficient session start")
+    ok("9 slash commands created")
+    print(f"  {C.DIM}/project:init    — first-session setup (stack + commands)")
+    print(f"  /project:brief   — token-efficient session start")
     print(f"  /project:status  — read-only project overview")
     print(f"  /project:decide  — guided ADR (Claude challenges first)")
     print(f"  /project:review  — critical code review")
@@ -1003,19 +1039,22 @@ def finish(cfg):
   {C.CYAN}code {d}{C.RESET}
   (Opens VS Code connected to WSL2 — edit CLAUDE.md, docs/, everything from there)
 
-{C.BOLD}Step 2 — Fill in CLAUDE.md:{C.RESET}
-  Add your run/test/build commands under the Commands section.
-  VS Code: Ctrl+P → type CLAUDE.md → open it.
-
-{C.BOLD}Step 3 — Start Claude Code:{C.RESET}
+{C.BOLD}Step 2 — Start Claude Code:{C.RESET}
   In VS Code: open the integrated terminal (Ctrl+`) then:
   {C.CYAN}claude{C.RESET}
 
-{C.BOLD}Step 4 — First prompt:{C.RESET}
+{C.BOLD}Step 3 — Run /project:init FIRST:{C.RESET}
+  {C.CYAN}/project:init{C.RESET}
+  {C.YELLOW}This is required before anything else.{C.RESET}
+  It asks for your stack, run/test/dev commands, and writes them into CLAUDE.md
+  and MAINTENANCE.md so every future session knows how to run your project.
+
+{C.BOLD}Step 4 — Then start working:{C.RESET}
   {C.CYAN}/project:brief{C.RESET}
   Claude reads your docs and asks what you're building today.
 
 {C.BOLD}Slash commands:{C.RESET}
+  {C.CYAN}/project:init{C.RESET}    First-session setup — define stack + commands
   {C.CYAN}/project:brief{C.RESET}   Start-of-session briefing (token-efficient)
   {C.CYAN}/project:status{C.RESET}  Where are we / what's next
   {C.CYAN}/project:decide{C.RESET}  Guided decision + ADR log (Claude challenges you first)
