@@ -246,6 +246,53 @@ def collect_info():
         "today": datetime.date.today().isoformat(),
     }
 
+# ── Step 1b: Create global ~/.claude/CLAUDE.md ───────────────
+def create_global_claude_md():
+    header("Global Claude Code settings")
+    claude_dir = Path.home() / ".claude"
+    claude_dir.mkdir(parents=True, exist_ok=True)
+    global_md = claude_dir / "CLAUDE.md"
+
+    if global_md.exists():
+        warn("~/.claude/CLAUDE.md already exists — skipping (not overwriting)")
+        return
+
+    global_md.write_text("""\
+# Global Claude Code Settings
+
+These apply to ALL projects. Project-level CLAUDE.md overrides where needed.
+
+## Coding Conventions
+- Prefer simple and readable over clever
+- Add comments for non-obvious logic — future sessions have no memory
+- All errors logged, never silently swallowed
+- Environment variables via `.env` (never committed — use `.env.example`)
+- When a pattern exists in the codebase, follow it; ask before deviating
+
+## Commit Rule (non-negotiable)
+**Always use `./commit.sh "message"` — never bare `git commit`.**
+The script auto-stages docs/, src/, config files and blocks commits if CHANGELOG.md
+isn't updated when src/ changed.
+
+Before every commit, update:
+- `docs/CHANGELOG.md` — always, for every code change
+- `docs/PROJECT_STATUS.md` — if any task changed state
+- `docs/DECISIONS.md` — if an architectural decision was made
+- `docs/TROUBLESHOOTING.md` — if a bug was hit and fixed
+
+## Claude Communication
+You are a **critical friend**, not a yes-machine.
+
+- Be direct. Skip flattery. If something is wrong, say so.
+- Challenge architectural decisions before implementing — ask "is there a simpler way?"
+- Flag scope creep: "do we actually need this in the current sprint?"
+- Point out technical debt being introduced
+- Don't rely on reminding me to do things — if something must happen every time, suggest we automate or enforce it with tooling
+- Scope each session to ONE feature or ONE bug — push back if asked to do more
+- If context window is >70% full, say so and suggest /compact before continuing
+""", encoding="utf-8")
+    ok("~/.claude/CLAUDE.md created with global settings")
+
 # ── Step 2: Create folder structure ───────────────────────────
 def create_structure(cfg):
     header("Creating project structure")
@@ -328,40 +375,13 @@ These files ARE Claude's memory between sessions. Keep them accurate.
 ./commit.sh "message"       # ALWAYS use this to commit — never bare git commit
 ```
 
-## Architecture
-See `@docs/DECISIONS.md` for all architectural decisions and reasoning.
-**Do not make architectural choices without consulting this file first.**
-
-## Directory Structure
-```
-{p}/
-├── CLAUDE.md              ← you are here (keep under 150 lines)
-├── docs/
-│   ├── DECISIONS.md       ← decision log — WHY choices were made
-│   ├── PROJECT_STATUS.md  ← sprint tasks, blockers, what's working
-│   ├── TROUBLESHOOTING.md ← known issues grouped by category
-│   ├── CHANGELOG.md       ← what changed and when
-│   └── ROADMAP.md         ← sprints and feature backlog
-└── .claude/commands/      ← custom slash commands
-```
-
 ## Commit Rule (non-negotiable)
 **Always use `./commit.sh "message"` — never bare `git commit`.**
-The script auto-stages docs/, src/, config files and blocks commits if CHANGELOG.md
-isn't updated when src/ changed.
-
 Before every commit, update:
 - `docs/CHANGELOG.md` — always, for every code change
 - `docs/PROJECT_STATUS.md` — if any task changed state
 - `docs/DECISIONS.md` — if an architectural decision was made
 - `docs/TROUBLESHOOTING.md` — if a bug was hit and fixed
-
-## Coding Conventions
-- Prefer simple and readable over clever
-- Add comments for non-obvious logic — future sessions have no memory
-- All errors logged, never silently swallowed
-- Environment variables via `.env` (never committed — use `.env.example`)
-- When a pattern exists in the codebase, follow it; ask before deviating
 
 ## Design System (if applicable)
 If this project has a UI, create a design tokens file as single source of truth
@@ -372,26 +392,15 @@ values in component files.
 If this project stores data locally, use a schema version number from day one.
 Every data structure change gets a migration. Bump schema version with every migration.
 
-## Claude's Role
-You are a **critical friend**, not a yes-machine.
-
-- Challenge architectural decisions before implementing — ask "is there a simpler way?"
-- Flag scope creep: "do we actually need this in the current sprint?"
-- Point out technical debt being introduced
-- Don't rely on reminding me to do things — if something must happen every time, suggest we automate or enforce it with tooling (lesson from a past project: prompts get forgotten, hooks don't)
-- Be direct. Skip flattery. If something is wrong, say so.
-- If context window is >70% full, say so and suggest /compact before continuing
-- Scope each session to ONE feature or ONE bug — push back if asked to do more
-
 ## Definition of Done (non-negotiable)
-Before calling any feature or fix "done", complete ALL of these:
+Before calling any feature or fix "done", complete ALL 5:
 1. Code works — manually verify the happy path
-2. Tests written — new behaviour has test coverage
-3. All tests pass — run the test command, zero failures
+2. Tests written — new functionality has test coverage
+3. All existing tests pass — run the test command, zero failures
 4. `docs/CHANGELOG.md` updated — one line per logical change
-5. `./commit.sh "message"` — commit with docs included
+5. `./commit.sh "message"` run successfully — commit with docs included
 
-If any step fails, the feature is not done. Do not say "done" until all 5 pass.
+Never say "done" until all 5 are complete.
 
 ## What Claude Gets Wrong on This Project
 <!-- Update this as you discover patterns — highest-value section -->
@@ -1045,12 +1054,14 @@ def finish(cfg):
     print(f"╚══════════════════════════════════════════════════╝{C.RESET}")
 
     print(f"""
+{C.BOLD}Global settings:{C.RESET}
+  {C.CYAN}~/.claude/CLAUDE.md{C.RESET} — coding conventions, commit rule, Claude communication prefs
+  (Applies to all projects. Project CLAUDE.md overrides where needed.)
+
 {C.BOLD}Step 1 — Open in VS Code:{C.RESET}
   {C.CYAN}code {d}{C.RESET}
-  (Opens VS Code connected to WSL2 — edit CLAUDE.md, docs/, everything from there)
 
 {C.BOLD}Step 2 — Start Claude Code:{C.RESET}
-  In VS Code: open the integrated terminal (Ctrl+`) then:
   {C.CYAN}claude{C.RESET}
 
 {C.BOLD}Step 3 — Run /project:init FIRST:{C.RESET}
@@ -1085,6 +1096,7 @@ Never paste file contents into Claude — use @path instead.{C.RESET}
 def main():
     try:
         cfg = collect_info()
+        create_global_claude_md()
         create_structure(cfg)
         create_docs(cfg)
         create_commands(cfg)
