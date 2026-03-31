@@ -383,6 +383,16 @@ You are a **critical friend**, not a yes-machine.
 - If context window is >70% full, say so and suggest /compact before continuing
 - Scope each session to ONE feature or ONE bug — push back if asked to do more
 
+## Definition of Done (non-negotiable)
+Before calling any feature or fix "done", complete ALL of these:
+1. Code works — manually verify the happy path
+2. Tests written — new behaviour has test coverage
+3. All tests pass — run the test command, zero failures
+4. `docs/CHANGELOG.md` updated — one line per logical change
+5. `./commit.sh "message"` — commit with docs included
+
+If any step fails, the feature is not done. Do not say "done" until all 5 pass.
+
 ## What Claude Gets Wrong on This Project
 <!-- Update this as you discover patterns — highest-value section -->
 - Forgets to update docs — enforced by commit.sh, but verify before committing
