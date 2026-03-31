@@ -1092,9 +1092,77 @@ def finish(cfg):
 Never paste file contents into Claude — use @path instead.{C.RESET}
 """)
 
+# ── Update mode ───────────────────────────────────────────────
+def update_project(target_dir):
+    """Re-generate slash commands and commit.sh for an existing project."""
+    target_dir = os.path.expanduser(target_dir)
+    if not os.path.isdir(target_dir):
+        err(f"Directory not found: {target_dir}")
+
+    claude_md = os.path.join(target_dir, "CLAUDE.md")
+    if not os.path.isfile(claude_md):
+        err(f"Not a starter-kit project (no CLAUDE.md): {target_dir}")
+
+    project_name = os.path.basename(os.path.normpath(target_dir))
+    print(f"\n{C.CYAN}{C.BOLD}Updating: {project_name}{C.RESET}")
+    print(f"  {C.DIM}{target_dir}{C.RESET}\n")
+
+    cfg = {
+        "project_name": project_name,
+        "target_dir": target_dir,
+        "today": datetime.date.today().isoformat(),
+    }
+
+    # Ensure .claude/commands/ exists
+    cmd_dir = os.path.join(target_dir, ".claude", "commands")
+    Path(cmd_dir).mkdir(parents=True, exist_ok=True)
+
+    # Re-generate slash commands and commit.sh
+    create_commands(cfg)
+
+    # Re-generate commit.sh
+    commit_sh_path = os.path.join(target_dir, "commit.sh")
+    Path(commit_sh_path).write_text(
+'''#!/bin/bash
+# commit.sh — enforced commit workflow
+# Usage: ./commit.sh "your commit message"
+# Auto-stages docs/, src/, config files. Blocks commit if CHANGELOG not updated with src/ changes.
+
+set -e
+
+if [ -z "$1" ]; then
+  echo 'Usage: ./commit.sh "commit message"' && exit 1
+fi
+
+git add docs/ src/ .claude/ 2>/dev/null || true
+git add *.json *.ts *.js *.sh *.md *.toml *.py 2>/dev/null || true
+
+SRC_CHANGED=$(git diff --cached --name-only | grep "^src/" || true)
+CHANGELOG_CHANGED=$(git diff --cached --name-only | grep "CHANGELOG.md" || true)
+
+if [ -n "$SRC_CHANGED" ] && [ -z "$CHANGELOG_CHANGED" ]; then
+  echo "ERROR: src/ changed but CHANGELOG.md was not updated. Update it first."
+  exit 1
+fi
+
+git commit -m "$1" && git push
+''', encoding="utf-8")
+    import stat as stat_mod
+    os.chmod(commit_sh_path, os.stat(commit_sh_path).st_mode | stat_mod.S_IEXEC | stat_mod.S_IXGRP | stat_mod.S_IXOTH)
+    ok("commit.sh updated")
+
+    # Update global CLAUDE.md
+    create_global_claude_md()
+
+    print(f"\n{C.GREEN}{C.BOLD}✓ {project_name} updated with latest starter kit templates.{C.RESET}")
+    print(f"  {C.DIM}CLAUDE.md was NOT touched — only slash commands and commit.sh were refreshed.{C.RESET}")
+
 # ── Main ───────────────────────────────────────────────────────
 def main():
     try:
+        if len(sys.argv) >= 3 and sys.argv[1] == "--update":
+            update_project(sys.argv[2])
+            return
         cfg = collect_info()
         create_global_claude_md()
         create_structure(cfg)

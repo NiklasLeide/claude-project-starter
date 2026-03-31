@@ -53,14 +53,17 @@ if %i%==0 (
 
 echo.
 echo   N. Start new project
+echo   U. Update project (refresh slash commands + commit.sh)
 echo.
 
-set /p choice="Pick a number (or N): "
+set /p choice="Pick a number, N, or U: "
 
 if /i "%choice%"=="N" (
     wsl -e bash -lic "newproject"
     exit /b
 )
+
+if /i "%choice%"=="U" goto :update
 
 :: Validate choice
 if %choice% LSS 1 goto :invalid
@@ -71,6 +74,17 @@ set "selpath=!path[%choice%]!"
 echo.
 echo Opening %selected% in VS Code...
 wsl -e bash -c "code --new-window %selpath%"
+exit /b
+
+:update
+echo.
+set /p upick="Which project number to update? "
+if %upick% LSS 1 goto :invalid
+if %upick% GTR %i% goto :invalid
+set "uppath=!path[%upick%]!"
+echo.
+echo Updating !proj[%upick%]!...
+wsl -e bash -lic "python3 ~/tools/claude-project-starter/new_project.py --update !uppath!"
 exit /b
 
 :invalid
