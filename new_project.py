@@ -326,7 +326,7 @@ def create_structure(cfg):
 '''#!/bin/bash
 # commit.sh — enforced commit workflow
 # Usage: ./commit.sh "your commit message"
-# Auto-stages docs/, src/, config files. Blocks commit if CHANGELOG not updated with src/ changes.
+# Stages all tracked/new files (relies on .gitignore). Blocks commit if CHANGELOG not updated with src/ changes.
 
 set -e
 
@@ -334,8 +334,7 @@ if [ -z "$1" ]; then
   echo 'Usage: ./commit.sh "commit message"' && exit 1
 fi
 
-git add docs/ src/ .claude/ 2>/dev/null || true
-git add *.json *.ts *.js *.sh *.md *.toml *.py 2>/dev/null || true
+git add -A
 
 SRC_CHANGED=$(git diff --cached --name-only | grep "^src/" || true)
 CHANGELOG_CHANGED=$(git diff --cached --name-only | grep "CHANGELOG.md" || true)
@@ -554,6 +553,11 @@ Known issues and solutions. Check here before debugging. Add here when you fix s
 **Symptom:** `python -m venv` fails or venv doesn't work.
 **Cause:** Symlinks and permissions broken on mounted Windows filesystem.
 **Solution:** Create venv on native WSL: `python3 -m venv ~/venv-{p}`
+
+### Shell glob patterns fail on /mnt/c/ (e.g. git add *.md)
+**Symptom:** `git add *.md` or similar glob commands silently do nothing or error on `/mnt/c/`.
+**Cause:** Bash glob expansion behaves differently on the Windows-mounted filesystem. If no files match, the literal `*.md` is passed to git, which fails.
+**Solution:** Use `git add -A` (stages everything, relies on `.gitignore`) instead of individual glob patterns. The project's `commit.sh` already does this.
 
 ---
 
@@ -1175,7 +1179,7 @@ def update_project(target_dir):
 '''#!/bin/bash
 # commit.sh — enforced commit workflow
 # Usage: ./commit.sh "your commit message"
-# Auto-stages docs/, src/, config files. Blocks commit if CHANGELOG not updated with src/ changes.
+# Stages all tracked/new files (relies on .gitignore). Blocks commit if CHANGELOG not updated with src/ changes.
 
 set -e
 
@@ -1183,8 +1187,7 @@ if [ -z "$1" ]; then
   echo 'Usage: ./commit.sh "commit message"' && exit 1
 fi
 
-git add docs/ src/ .claude/ 2>/dev/null || true
-git add *.json *.ts *.js *.sh *.md *.toml *.py 2>/dev/null || true
+git add -A
 
 SRC_CHANGED=$(git diff --cached --name-only | grep "^src/" || true)
 CHANGELOG_CHANGED=$(git diff --cached --name-only | grep "CHANGELOG.md" || true)
