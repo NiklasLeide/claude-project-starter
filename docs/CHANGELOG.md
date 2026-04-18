@@ -5,6 +5,13 @@ Types: `feat` | `fix` | `refactor` | `docs` | `chore` | `perf`
 
 ---
 
+[2026-04-18] feat: add dod-reviewer sub-agent — verifies Definition of Done at sprint close via task-in-plan enforcement
+[2026-04-18] feat: add code-researcher sub-agent — tactical API/library research during implementation
+[2026-04-18] feat: add SessionStart hook with DoD reminder (.claude/settings.json + session-start-reminder.txt)
+[2026-04-18] feat: add GitHub Action changelog-check.yml — blocks PRs if src/ changed without CHANGELOG update
+[2026-04-18] feat: add "Sprint closure" convention to shared-conventions.md — every sprint ends with DoD review task
+[2026-04-18] feat: Sprint 0 template now includes "Run DoD review" as task 0.3
+[2026-04-18] feat: /project:scope now instructs Claude to include DoD review task in every new sprint plan
 [2026-04-18] feat: add "Inline artifacts in briefs" convention to shared-conventions — chat-produced files go inline in briefs, not as external references
 [2026-04-18] feat: generate .claude/shared-conventions.md per project — centralizes commit rule, DoD, communication, brief format, mode-switch, context management
 [2026-04-18] refactor: slim CLAUDE.md template — removed duplicated sections, added @.claude/shared-conventions.md reference

@@ -48,15 +48,22 @@ your-project/
 │   ├── TROUBLESHOOTING.md       ← issues + fixes
 │   ├── CHANGELOG.md             ← what changed + when
 │   └── ROADMAP.md               ← features, prioritized
-└── .claude/
-    ├── shared-conventions.md    ← commit rule, DoD, communication, brief format
-    └── commands/
-        ├── brief.md             ← /project:brief
-        ├── status.md            ← /project:status
-        ├── decide.md            ← /project:decide
-        ├── review.md            ← /project:review
-        ├── log.md               ← /project:log
-        └── scope.md             ← /project:scope
+├── .claude/
+│   ├── shared-conventions.md    ← commit rule, DoD, sprint closure, communication
+│   ├── settings.json            ← SessionStart hook (DoD reminder)
+│   ├── session-start-reminder.txt
+│   ├── agents/
+│   │   ├── dod-reviewer.md      ← sprint close DoD verification
+│   │   └── code-researcher.md   ← tactical API/library research
+│   └── commands/
+│       ├── brief.md             ← /project:brief
+│       ├── status.md            ← /project:status
+│       ├── decide.md            ← /project:decide
+│       ├── review.md            ← /project:review
+│       ├── log.md               ← /project:log
+│       └── scope.md             ← /project:scope
+└── .github/workflows/
+    └── changelog-check.yml      ← blocks PRs if src/ changed without CHANGELOG
 ```
 
 ## GitHub labels created
@@ -94,6 +101,10 @@ your-project/
 - One-feature-per-session boundary enforced by Claude
 
 **Decision trail:** DECISIONS.md logs what you chose AND what you rejected. The rejected alternatives are the valuable part.
+
+**Enforceable sprint closure:** Every sprint plan ends with a "Run DoD review" task. The `dod-reviewer` sub-agent verifies Definition of Done for the sprint scope — code works, tests pass, CHANGELOG updated. Sprints cannot be marked complete with open gaps.
+
+**Layered enforcement:** `commit.sh` blocks commits without CHANGELOG updates. The GitHub Action blocks PRs with the same rule. The SessionStart hook reminds Claude of the DoD at every session. The sprint closure task catches anything that slipped through.
 
 ## First session
 

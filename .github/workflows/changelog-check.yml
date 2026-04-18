@@ -1,0 +1,33 @@
+name: CHANGELOG check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for src/ changes without CHANGELOG update
+        run: |
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+
+          SRC_CHANGED=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" | grep "^src/" || true)
+          CHANGELOG_CHANGED=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" | grep "^docs/CHANGELOG.md" || true)
+
+          if [ -n "$SRC_CHANGED" ] && [ -z "$CHANGELOG_CHANGED" ]; then
+            echo "::error::src/ changed in this PR but docs/CHANGELOG.md was not updated."
+            echo "Changed src/ files:"
+            echo "$SRC_CHANGED" | sed 's/^/  /'
+            echo ""
+            echo "Add a CHANGELOG entry describing these changes and push again."
+            exit 1
+          fi
+
+          echo "CHANGELOG check passed."
