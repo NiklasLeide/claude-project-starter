@@ -38,7 +38,8 @@ That's it. Answer the questions, confirm, done.
 
 ```
 your-project/
-├── CLAUDE.md                    ← Claude's brain (lean, <150 lines)
+├── CLAUDE.md                    ← Claude's brain (lean, references shared-conventions)
+├── RESEARCH_AGENT.md            ← (optional) domain research methodology template
 ├── .gitignore
 ├── .env.example
 ├── docs/
@@ -47,13 +48,15 @@ your-project/
 │   ├── TROUBLESHOOTING.md       ← issues + fixes
 │   ├── CHANGELOG.md             ← what changed + when
 │   └── ROADMAP.md               ← features, prioritized
-└── .claude/commands/
-    ├── brief.md                 ← /project:brief
-    ├── status.md                ← /project:status
-    ├── decide.md                ← /project:decide
-    ├── review.md                ← /project:review
-    ├── log.md                   ← /project:log
-    └── scope.md                 ← /project:scope
+└── .claude/
+    ├── shared-conventions.md    ← commit rule, DoD, communication, brief format
+    └── commands/
+        ├── brief.md             ← /project:brief
+        ├── status.md            ← /project:status
+        ├── decide.md            ← /project:decide
+        ├── review.md            ← /project:review
+        ├── log.md               ← /project:log
+        └── scope.md             ← /project:scope
 ```
 
 ## GitHub labels created
