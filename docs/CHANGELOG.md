@@ -5,6 +5,11 @@ Types: `feat` | `fix` | `refactor` | `docs` | `chore` | `perf`
 
 ---
 
+[2026-04-19] feat: create niklas-marketplace repo with claude-project-starter plugin v1.0.0
+[2026-04-19] refactor: move shared-conventions, sub-agents, hooks, slash commands from per-project generation to plugin
+[2026-04-19] feat: new_project.py generates .claude/settings.json with plugin declaration instead of inline content
+[2026-04-19] refactor: remove create_shared_conventions(), create_agents(), create_settings_and_hook(), create_commands() from new_project.py
+[2026-04-19] feat: migrate claude-project-starter's own .claude/ to use plugin
 [2026-04-18] feat: add dod-reviewer sub-agent — verifies Definition of Done at sprint close via task-in-plan enforcement
 [2026-04-18] feat: add code-researcher sub-agent — tactical API/library research during implementation
 [2026-04-18] feat: add SessionStart hook with DoD reminder (.claude/settings.json + session-start-reminder.txt)

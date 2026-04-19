@@ -1,15 +1,13 @@
 {
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "startup",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "cat \"$CLAUDE_PROJECT_DIR/.claude/session-start-reminder.txt\" 2>/dev/null || true"
-          }
-        ]
+  "extraKnownMarketplaces": {
+    "niklas-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "NiklasLeide/niklas-marketplace"
       }
-    ]
+    }
+  },
+  "enabledPlugins": {
+    "claude-project-starter@niklas-marketplace": true
   }
 }

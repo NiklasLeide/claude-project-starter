@@ -38,10 +38,11 @@ That's it. Answer the questions, confirm, done.
 
 ```
 your-project/
-├── CLAUDE.md                    ← Claude's brain (lean, references shared-conventions)
+├── CLAUDE.md                    ← Claude's brain (references shared-conventions via plugin)
 ├── RESEARCH_AGENT.md            ← (optional) domain research methodology template
 ├── .gitignore
 ├── .env.example
+├── commit.sh                    ← enforced commit workflow
 ├── docs/
 │   ├── DECISIONS.md             ← ADR log (the WHY)
 │   ├── PROJECT_STATUS.md        ← current sprint + blockers
@@ -49,22 +50,16 @@ your-project/
 │   ├── CHANGELOG.md             ← what changed + when
 │   └── ROADMAP.md               ← features, prioritized
 ├── .claude/
-│   ├── shared-conventions.md    ← commit rule, DoD, sprint closure, communication
-│   ├── settings.json            ← SessionStart hook (DoD reminder)
-│   ├── session-start-reminder.txt
-│   ├── agents/
-│   │   ├── dod-reviewer.md      ← sprint close DoD verification
-│   │   └── code-researcher.md   ← tactical API/library research
-│   └── commands/
-│       ├── brief.md             ← /project:brief
-│       ├── status.md            ← /project:status
-│       ├── decide.md            ← /project:decide
-│       ├── review.md            ← /project:review
-│       ├── log.md               ← /project:log
-│       └── scope.md             ← /project:scope
+│   └── settings.json            ← declares claude-project-starter plugin
 └── .github/workflows/
     └── changelog-check.yml      ← blocks PRs if src/ changed without CHANGELOG
 ```
+
+The plugin (`claude-project-starter@niklas-marketplace`) provides:
+- `shared-conventions.md` — commit rule, DoD, sprint closure, communication, brief format
+- Slash commands — /project:brief, :status, :decide, :review, :log, :scope, :init, :resume, :parkhere
+- Sub-agents — dod-reviewer (sprint close verification), code-researcher (tactical API research)
+- SessionStart hook — DoD reminder at every session start
 
 ## GitHub labels created
 
@@ -90,6 +85,18 @@ your-project/
 | `/project:log` | Updates CHANGELOG.md + PROJECT_STATUS.md from recent git changes |
 | `/project:scope` | Scopes a new feature, asks minimum viable version, drafts GitHub issue |
 
+## Plugin dependency
+
+Generated projects depend on the `claude-project-starter` plugin from the
+`niklas-marketplace` private marketplace (GitHub: NiklasLeide/niklas-marketplace).
+
+For Claude Code to fetch the plugin, you need GitHub authentication:
+- `gh auth login` (recommended), or
+- `GITHUB_TOKEN` env var with `repo` scope
+
+The plugin is declared in each project's `.claude/settings.json`. Claude Code
+syncs it automatically on startup.
+
 ## The philosophy baked in
 
 **Non-sycophantic Claude:** CLAUDE.md explicitly instructs Claude to challenge decisions, flag scope creep, and skip flattery. `/project:decide` forces the conversation before the ADR is written.
@@ -101,6 +108,8 @@ your-project/
 - One-feature-per-session boundary enforced by Claude
 
 **Decision trail:** DECISIONS.md logs what you chose AND what you rejected. The rejected alternatives are the valuable part.
+
+**Plugin-based conventions:** Shared conventions, slash commands, sub-agents, and hooks live in a centralized plugin. Updating the plugin version propagates improvements to all projects — no manual file copying.
 
 **Enforceable sprint closure:** Every sprint plan ends with a "Run DoD review" task. The `dod-reviewer` sub-agent verifies Definition of Done for the sprint scope — code works, tests pass, CHANGELOG updated. Sprints cannot be marked complete with open gaps.
 
