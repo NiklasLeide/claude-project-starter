@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-04-19
 > **Current phase:** Workflow modernization
-> **Status:** Sprint 5 in progress (MCPs)
+> **Status:** Sprint 5 closed; Sprint 6 (Routines) up next
 
 ---
 
@@ -14,7 +14,7 @@
 | 2 | Validate Claude Code on the web | ✅ Closed | val26 cloud environment created, read-tested; no code changes |
 | 3 | DoD enforcement | ✅ Closed | `dod-reviewer` + `code-researcher` sub-agents, local SessionStart hook, CHANGELOG GitHub Action, sprint-closure convention, task 0.3 "Run DoD review" in generated PROJECT_STATUS template (672c4d0) |
 | 4 | Plugin packaging | ✅ Closed | `niklas-marketplace` + `project` plugin v1.0.2 (conventions, agents, hooks, commands); val26 migrated as pilot. Known issue: SessionStart hook output not visible — tracked for v1.0.3 (dc4c4c6 → 497ec08; marketplace cc61676 + 6c35ef8) |
-| 5 | MCPs | 🔄 In progress | — |
+| 5 | MCPs | ✅ Closed | Plugin v1.1.1 ships Context7 + GitHub MCPs as universal defaults (`.mcp.json`); Tauri preset owns rust-analyzer-lsp; user settings cleaned. SQLite MCP deferred. Windows-native binary install pending (533a2af, 113040f) |
 | 6 | Routines | ⏸️ Planned | Brief after Sprint 5 closes |
 
 ---
@@ -23,12 +23,17 @@
 
 | # | Task | Status |
 |---|------|--------|
-| 5.1 | Add Context7 MCP to plugin as default for every project | ✅ shipped in v1.1.0 (`plugins/project/.mcp.json`) |
-| 5.2 | Add official GitHub MCP to plugin as default for every project | ✅ shipped in v1.1.0 (remote HTTP, `${GITHUB_TOKEN}`) |
+| 5.1 | Add Context7 MCP to plugin as default for every project | ✅ shipped in v1.1.0 (`plugins/project/.mcp.json`, stdio via `npx`). Verified in val26. |
+| 5.2 | Add official GitHub MCP to plugin as default for every project | ✅ shipped in v1.1.1 (local binary-stdio; v1.1.0's remote HTTP dropped — Copilot endpoint requires OAuth+DCR unsupported by Claude Code). Verified in val26 with real PR query. |
 | 5.3 | Add SQLite MCP to plugin for Python/FastAPI+SQLite preset only | ⏸️ deferred — modelcontextprotocol/servers SQLite impl archived, no trustworthy replacement yet |
-| 5.4 | Move rust-analyzer-lsp from user settings to Tauri preset plugin declarations | 🔄 generator updated, user-settings cleanup pending val26 verification |
-| 5.5 | Bump plugin to v1.1.0 and verify in val26 | 🔄 v1.1.0 pushed, behavioral verification pending (restart Claude Code in val26) |
-| 5.6 | Run DoD review for this sprint | ☐ (after 5.4/5.5 verification) |
+| 5.4 | Move rust-analyzer-lsp from user settings to Tauri preset plugin declarations | ✅ generator writes superpowers-marketplace + rust-analyzer-lsp for Tauri stack; removed from both user-level `settings.json` files |
+| 5.5 | Bump plugin to v1.1.0 and verify in val26 | ✅ closed with v1.1.1 (v1.1.0 shipped with broken GitHub MCP, v1.1.1 fixed to binary-stdio). Both MCPs confirmed connected in val26 and responding to real queries. |
+| 5.6 | Run DoD review for this sprint | ✅ dod-reviewer ran, see sprint-close commit |
+
+### Known follow-ups from Sprint 5
+
+- **Windows-native `github-mcp-server` binary install pending.** The WSL2 binary is installed at `~/.local/bin/github-mcp-server` (v1.0.0). On Windows-native Claude Code the GitHub MCP will fail to load until the Windows zip from [releases](https://github.com/github/github-mcp-server/releases) is extracted and added to PATH. Install when next working from Windows-native, or stay in WSL2.
+- **Plugin SessionStart hook visibility** (carried from Sprint 4) — v1.0.3 work item; not addressed in Sprint 5.
 
 ---
 
