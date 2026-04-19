@@ -5,6 +5,7 @@ Types: `feat` | `fix` | `refactor` | `docs` | `chore` | `perf`
 
 ---
 
+[2026-04-19] docs: PROJECT_STATUS.md — catch up sprint tracking through Sprint 4 (baseline unification, cloud validation, DoD enforcement, plugin packaging), open Sprint 5 (MCPs) with task table, note Sprint 6 (routines) as planned
 [2026-04-19] chore: close Sprint 4 — plugin-based conventions shipped (v1.0.2). Known issue: SessionStart hook doesn't produce visible output despite loading cleanly; tracked in TROUBLESHOOTING.md as v1.0.3 work item. Slash commands, sub-agents, marketplace updates all functional.
 [2026-04-19] fix: plugin v1.0.2 — restore outer "hooks" wrapper in hooks/hooks.json (v1.0.1 over-corrected; Claude Code's loader requires the wrapper WITH the matcher field)
 [2026-04-19] fix: rename plugin claude-project-starter → project (v1.0.1) for shorter slash command prefix (/project:brief vs /claude-project-starter:brief)

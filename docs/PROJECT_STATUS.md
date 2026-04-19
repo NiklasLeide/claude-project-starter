@@ -1,55 +1,50 @@
 # Project Status — claude-project-starter
 
-> **Last updated:** 2026-03-23
-> **Current phase:** Stable / Iterative improvement
-> **Status:** Active tool, improved after each real project
+> **Last updated:** 2026-04-19
+> **Current phase:** Workflow modernization
+> **Status:** Sprint 5 in progress (MCPs)
 
 ---
 
-## What's Working Now
+## Sprint history
 
-Everything. This is a mature tool in active use.
-
-```bash
-newproject                    # run the starter kit (alias)
-python3 new_project.py        # alternative
-./projects.bat                # Windows launcher — pick or create projects
-```
-
-### Features
-- Interactive project setup (~8 questions)
-- 9 stack presets (Python, Node, Tauri, Spring Boot, Vert.x, etc.)
-- Full doc scaffold: CLAUDE.md, DECISIONS.md, PROJECT_STATUS.md, TROUBLESHOOTING.md, CHANGELOG.md, ROADMAP.md, MAINTENANCE.md
-- 8 Claude Code slash commands (brief, status, decide, review, log, scope, parkhere, resume)
-- GitHub repo creation with custom labels, milestone, project board
-- commit.sh enforcement script
-- Tauri projects auto-placed on Windows filesystem
-- projects.bat: Windows batch launcher scanning 4 project directories
+| Sprint | Theme | Status | Key output |
+|--------|-------|--------|------------|
+| 1 | Baseline unification | ✅ Closed | `shared-conventions.md`, slimmed `CLAUDE.md`, `CLAUDE_PROJECT_INSTRUCTIONS.md`, user-level `~/.claude/CLAUDE.md` stubs (f6a026d) |
+| 2 | Validate Claude Code on the web | ✅ Closed | val26 cloud environment created, read-tested; no code changes |
+| 3 | DoD enforcement | ✅ Closed | `dod-reviewer` + `code-researcher` sub-agents, local SessionStart hook, CHANGELOG GitHub Action, sprint-closure convention, task 0.3 "Run DoD review" in generated PROJECT_STATUS template (672c4d0) |
+| 4 | Plugin packaging | ✅ Closed | `niklas-marketplace` + `project` plugin v1.0.2 (conventions, agents, hooks, commands); val26 migrated as pilot. Known issue: SessionStart hook output not visible — tracked for v1.0.3 (dc4c4c6 → 497ec08; marketplace cc61676 + 6c35ef8) |
+| 5 | MCPs | 🔄 In progress | — |
+| 6 | Routines | ⏸️ Planned | Brief after Sprint 5 closes |
 
 ---
 
-## Recent Improvements (latest first)
+## Sprint 5 — MCPs
 
-| Date | Change | Source |
-|------|--------|--------|
-| 2026-03-23 | Tauri projects auto-default to /mnt/c/.../projects/ | Stack usage |
-| 2026-03-23 | projects.bat scans ~/projects/, /mnt/c/.../projects/, ~/tools/, ~/lifecoach-app-repo | Workflow need |
-| 2026-03-23 | projects.bat created — Windows launcher for projects | Workflow need |
-| 2026-03-15 | commit.sh enforcement added to template | Lesson from eventplanner |
-| 2026-03-15 | Classic GitHub tokens, Tauri/Spring Boot/Vert.x presets | Bug fix + expansion |
-| 2026-03-15 | parkhere + resume slash commands, MAINTENANCE.md template | Maintenance workflow |
+| # | Task | Status |
+|---|------|--------|
+| 5.1 | Add Context7 MCP to plugin as default for every project | ☐ |
+| 5.2 | Add official GitHub MCP to plugin as default for every project | ☐ |
+| 5.3 | Add SQLite MCP to plugin for Python/FastAPI+SQLite preset only | ☐ |
+| 5.4 | Move rust-analyzer-lsp from user settings to Tauri preset plugin declarations | ☐ |
+| 5.5 | Bump plugin to v1.1.0 and verify in val26 | ☐ |
+| 5.6 | Run DoD review for this sprint | ☐ |
 
 ---
 
 ## Blockers
-_None_
+- _None_
+
+## Known issues carried forward
+- Plugin SessionStart hook output not visible in transcript despite clean load — see `docs/TROUBLESHOOTING.md`. Tracked for plugin v1.0.3.
 
 ---
 
 ## Backlog
 - [ ] Add more stack presets as new projects use them
-- [ ] Consider sorting projects.bat list alphabetically
+- [ ] Consider sorting `projects.bat` list alphabetically
+- [ ] Consider a `/project:retro` slash command for sprint retrospectives
 - [ ] Template improvements based on lessons from future projects
 
 ---
-> Update this after each improvement session.
+> Update after each sprint close. One row per sprint in the history table; tick the task table as Sprint 5 progresses.
