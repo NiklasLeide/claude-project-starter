@@ -5,8 +5,9 @@ Types: `feat` | `fix` | `refactor` | `docs` | `chore` | `perf`
 
 ---
 
+[2026-04-19] fix: plugin v1.0.2 — restore outer "hooks" wrapper in hooks/hooks.json (v1.0.1 over-corrected; Claude Code's loader requires the wrapper WITH the matcher field)
 [2026-04-19] fix: rename plugin claude-project-starter → project (v1.0.1) for shorter slash command prefix (/project:brief vs /claude-project-starter:brief)
-[2026-04-19] fix: correct hooks/hooks.json structure (flat top-level keys, add matcher "startup") so SessionStart DoD reminder fires
+[2026-04-19] fix: correct hooks/hooks.json structure (add matcher "startup") so SessionStart DoD reminder fires
 [2026-04-19] feat: create niklas-marketplace repo with claude-project-starter plugin v1.0.0
 [2026-04-19] refactor: move shared-conventions, sub-agents, hooks, slash commands from per-project generation to plugin
 [2026-04-19] feat: new_project.py generates .claude/settings.json with plugin declaration instead of inline content
