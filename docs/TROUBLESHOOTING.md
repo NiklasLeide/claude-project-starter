@@ -28,6 +28,24 @@ Known issues and solutions. Check here before debugging. Add here when you fix s
 
 ---
 
+## Plugin
+
+### SessionStart hook from plugin doesn't produce visible output
+**Symptom:** After enabling `project@niklas-marketplace` v1.0.2 in a project's `.claude/settings.json`, the DoD reminder (meant to print at session start via `hooks/hooks.json`) does not appear in the Claude Code transcript. No "Failed to load hooks" error in `/plugin` once v1.0.2 loaded — the hook file parses and the plugin is enabled.
+**What we know:**
+- v1.0.0 wrapper structure: `{"description": ..., "hooks": {"SessionStart": [{"hooks": [...]}]}}` — missing `matcher`, did not fire.
+- v1.0.1 flat structure: `{"SessionStart": [{"matcher": "startup", "hooks": [...]}]}` — failed to load (`invalid_type` on `hooks` path).
+- v1.0.2 wrapper + matcher: `{"hooks": {"SessionStart": [{"matcher": "startup", "hooks": [...]}]}}` — loads without error but reminder text is not visible in session output.
+- The hook command is `cat "${CLAUDE_PLUGIN_ROOT}/session-start-reminder.txt" 2>/dev/null || true` and the reminder file exists in the plugin cache.
+**Next diagnostic steps (for v1.0.3 work item):**
+1. Run `/plugin` in a fresh session and capture any hook-loading info to confirm the SessionStart hook is registered.
+2. Replace the `cat` command with something that writes to a known log (e.g. `date >> /tmp/claude-hook.log`) to verify the hook actually fires — isolates "hook not firing" from "stdout not surfacing".
+3. Check Claude Code docs/release notes for whether plugin-provided SessionStart stdout is currently piped to the transcript (may differ from project-local `.claude/settings.json` hooks).
+4. If the hook fires but stdout is suppressed, consider switching to an `additionalContext` or `systemMessage` output type per hook schema instead of plain command stdout.
+**Status:** Tracked as a v1.0.3 work item. Plugin is otherwise functional — slash commands, sub-agents, marketplace updates all work.
+
+---
+
 ## WSL2 / Environment
 
 ### `python` command not found
