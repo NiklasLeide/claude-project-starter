@@ -14,7 +14,7 @@
 | 2 | Validate Claude Code on the web | ✅ Closed | val26 cloud environment created, read-tested; no code changes |
 | 3 | DoD enforcement | ✅ Closed | `dod-reviewer` + `code-researcher` sub-agents, local SessionStart hook, CHANGELOG GitHub Action, sprint-closure convention, task 0.3 "Run DoD review" in generated PROJECT_STATUS template (672c4d0) |
 | 4 | Plugin packaging | ✅ Closed | `niklas-marketplace` + `project` plugin v1.0.2 (conventions, agents, hooks, commands); val26 migrated as pilot. Known issue: SessionStart hook output not visible — tracked for v1.0.3 (dc4c4c6 → 497ec08; marketplace cc61676 + 6c35ef8) |
-| 5 | MCPs | ✅ Closed | Plugin v1.1.1 ships Context7 + GitHub MCPs as universal defaults (`.mcp.json`); Tauri preset owns rust-analyzer-lsp; user settings cleaned. SQLite MCP deferred. Windows-native binary install pending (533a2af, 113040f) |
+| 5 | MCPs | ✅ Closed | Plugin v1.1.1 ships Context7 + GitHub MCPs as universal defaults (`.mcp.json`); Tauri preset owns rust-analyzer-lsp; user settings cleaned; `github-mcp-server` v1.0.0 binary installed on both WSL2 and Windows. SQLite MCP deferred (533a2af, 113040f) |
 | 6 | Routines | ⏸️ Planned | Brief after Sprint 5 closes |
 
 ---
@@ -32,7 +32,6 @@
 
 ### Known follow-ups from Sprint 5
 
-- **Windows-native `github-mcp-server` binary install pending.** The WSL2 binary is installed at `~/.local/bin/github-mcp-server` (v1.0.0). On Windows-native Claude Code the GitHub MCP will fail to load until the Windows zip from [releases](https://github.com/github/github-mcp-server/releases) is extracted and added to PATH. Install when next working from Windows-native, or stay in WSL2.
 - **Plugin SessionStart hook visibility** (carried from Sprint 4) — v1.0.3 work item; not addressed in Sprint 5.
 
 ---

@@ -5,7 +5,8 @@ Types: `feat` | `fix` | `refactor` | `docs` | `chore` | `perf`
 
 ---
 
-[2026-04-19] chore: close Sprint 5 — plugin v1.1.1 ships Context7 + GitHub MCPs as universal defaults; Tauri preset owns rust-analyzer-lsp; user settings cleaned. Known follow-up: install `github-mcp-server` Windows binary when next working from Windows-native Claude Code.
+[2026-04-19] docs: Sprint 5 follow-up — `github-mcp-server` v1.0.0 binary installed on Windows in parallel; both platforms ready.
+[2026-04-19] chore: close Sprint 5 — plugin v1.1.1 ships Context7 + GitHub MCPs as universal defaults; Tauri preset owns rust-analyzer-lsp; user settings cleaned.
 [2026-04-19] fix: plugin v1.1.1 — GitHub MCP switched from remote HTTP to local binary-stdio (`github-mcp-server stdio`, PAT via `GITHUB_PERSONAL_ACCESS_TOKEN`). Remote endpoint `api.githubcopilot.com/mcp/` requires OAuth with Dynamic Client Registration, which Claude Code's MCP client doesn't support. Adds prereq: install `github-mcp-server` binary on PATH per machine (Linuxbrew / release tarball / Windows zip).
 [2026-04-19] feat: Sprint 5 — plugin v1.1.0 adds Context7 + GitHub as universal MCPs (.mcp.json at plugin root). SQLite MCP deferred (modelcontextprotocol/servers implementation archived, no trusted replacement yet).
 [2026-04-19] feat: new_project.py — Tauri preset now writes superpowers-marketplace + rust-analyzer-lsp@claude-plugins-official into project settings.json. Non-Tauri projects no longer carry rust-analyzer.
