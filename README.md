@@ -50,12 +50,12 @@ your-project/
 │   ├── CHANGELOG.md             ← what changed + when
 │   └── ROADMAP.md               ← features, prioritized
 ├── .claude/
-│   └── settings.json            ← declares claude-project-starter plugin
+│   └── settings.json            ← declares project plugin
 └── .github/workflows/
     └── changelog-check.yml      ← blocks PRs if src/ changed without CHANGELOG
 ```
 
-The plugin (`claude-project-starter@niklas-marketplace`) provides:
+The plugin (`project@niklas-marketplace`) provides:
 - `shared-conventions.md` — commit rule, DoD, sprint closure, communication, brief format
 - Slash commands — /project:brief, :status, :decide, :review, :log, :scope, :init, :resume, :parkhere
 - Sub-agents — dod-reviewer (sprint close verification), code-researcher (tactical API research)
@@ -87,7 +87,7 @@ The plugin (`claude-project-starter@niklas-marketplace`) provides:
 
 ## Plugin dependency
 
-Generated projects depend on the `claude-project-starter` plugin from the
+Generated projects depend on the `project` plugin from the
 `niklas-marketplace` private marketplace (GitHub: NiklasLeide/niklas-marketplace).
 
 For Claude Code to fetch the plugin, you need GitHub authentication:

@@ -527,7 +527,7 @@ Monitoring steps:
 """)
 
 def create_plugin_settings(cfg):
-    """Write .claude/settings.json declaring the claude-project-starter plugin."""
+    """Write .claude/settings.json declaring the project plugin."""
     d = cfg["target_dir"]
     header("Configuring plugin")
     settings_path = os.path.join(d, ".claude", "settings.json")
@@ -541,10 +541,10 @@ def create_plugin_settings(cfg):
             }
         },
         "enabledPlugins": {
-            "claude-project-starter@niklas-marketplace": True
+            "project@niklas-marketplace": True
         }
     }, indent=2) + "\n", encoding="utf-8")
-    ok(".claude/settings.json (plugin: claude-project-starter@niklas-marketplace)")
+    ok(".claude/settings.json (plugin: project@niklas-marketplace)")
 
 def create_github_workflow(cfg):
     """Write .github/workflows/changelog-check.yml into the generated project."""
@@ -1138,7 +1138,7 @@ def finish(cfg):
   Claude reads your docs and asks what you're building today.
 
 {C.BOLD}Plugin:{C.RESET}
-  {C.CYAN}claude-project-starter@niklas-marketplace{C.RESET}
+  {C.CYAN}project@niklas-marketplace{C.RESET}
   Provides: shared conventions, slash commands, sub-agents (dod-reviewer,
   code-researcher), SessionStart hook (DoD reminder)
 

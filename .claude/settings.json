@@ -8,6 +8,6 @@
     }
   },
   "enabledPlugins": {
-    "claude-project-starter@niklas-marketplace": true
+    "project@niklas-marketplace": true
   }
 }
