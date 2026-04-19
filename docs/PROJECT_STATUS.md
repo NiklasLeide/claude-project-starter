@@ -23,12 +23,12 @@
 
 | # | Task | Status |
 |---|------|--------|
-| 5.1 | Add Context7 MCP to plugin as default for every project | ☐ |
-| 5.2 | Add official GitHub MCP to plugin as default for every project | ☐ |
-| 5.3 | Add SQLite MCP to plugin for Python/FastAPI+SQLite preset only | ☐ |
-| 5.4 | Move rust-analyzer-lsp from user settings to Tauri preset plugin declarations | ☐ |
-| 5.5 | Bump plugin to v1.1.0 and verify in val26 | ☐ |
-| 5.6 | Run DoD review for this sprint | ☐ |
+| 5.1 | Add Context7 MCP to plugin as default for every project | ✅ shipped in v1.1.0 (`plugins/project/.mcp.json`) |
+| 5.2 | Add official GitHub MCP to plugin as default for every project | ✅ shipped in v1.1.0 (remote HTTP, `${GITHUB_TOKEN}`) |
+| 5.3 | Add SQLite MCP to plugin for Python/FastAPI+SQLite preset only | ⏸️ deferred — modelcontextprotocol/servers SQLite impl archived, no trustworthy replacement yet |
+| 5.4 | Move rust-analyzer-lsp from user settings to Tauri preset plugin declarations | 🔄 generator updated, user-settings cleanup pending val26 verification |
+| 5.5 | Bump plugin to v1.1.0 and verify in val26 | 🔄 v1.1.0 pushed, behavioral verification pending (restart Claude Code in val26) |
+| 5.6 | Run DoD review for this sprint | ☐ (after 5.4/5.5 verification) |
 
 ---
 

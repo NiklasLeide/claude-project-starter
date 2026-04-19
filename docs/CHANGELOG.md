@@ -5,6 +5,8 @@ Types: `feat` | `fix` | `refactor` | `docs` | `chore` | `perf`
 
 ---
 
+[2026-04-19] feat: Sprint 5 — plugin v1.1.0 adds Context7 + GitHub as universal MCPs (.mcp.json at plugin root). SQLite MCP deferred (modelcontextprotocol/servers implementation archived, no trusted replacement yet).
+[2026-04-19] feat: new_project.py — Tauri preset now writes superpowers-marketplace + rust-analyzer-lsp@claude-plugins-official into project settings.json. Non-Tauri projects no longer carry rust-analyzer.
 [2026-04-19] docs: PROJECT_STATUS.md — catch up sprint tracking through Sprint 4 (baseline unification, cloud validation, DoD enforcement, plugin packaging), open Sprint 5 (MCPs) with task table, note Sprint 6 (routines) as planned
 [2026-04-19] chore: close Sprint 4 — plugin-based conventions shipped (v1.0.2). Known issue: SessionStart hook doesn't produce visible output despite loading cleanly; tracked in TROUBLESHOOTING.md as v1.0.3 work item. Slash commands, sub-agents, marketplace updates all functional.
 [2026-04-19] fix: plugin v1.0.2 — restore outer "hooks" wrapper in hooks/hooks.json (v1.0.1 over-corrected; Claude Code's loader requires the wrapper WITH the matcher field)

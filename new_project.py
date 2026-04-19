@@ -527,24 +527,43 @@ Monitoring steps:
 """)
 
 def create_plugin_settings(cfg):
-    """Write .claude/settings.json declaring the project plugin."""
+    """Write .claude/settings.json declaring plugins. Adds stack-specific plugins for Tauri (rust-analyzer-lsp)."""
     d = cfg["target_dir"]
     header("Configuring plugin")
     settings_path = os.path.join(d, ".claude", "settings.json")
-    Path(settings_path).write_text(json.dumps({
-        "extraKnownMarketplaces": {
-            "niklas-marketplace": {
-                "source": {
-                    "source": "github",
-                    "repo": "NiklasLeide/niklas-marketplace"
-                }
+
+    marketplaces = {
+        "niklas-marketplace": {
+            "source": {
+                "source": "github",
+                "repo": "NiklasLeide/niklas-marketplace"
             }
-        },
-        "enabledPlugins": {
-            "project@niklas-marketplace": True
         }
+    }
+    enabled = {
+        "project@niklas-marketplace": True
+    }
+
+    # Tauri projects also need the Rust language server (from superpowers-marketplace)
+    is_tauri = "Tauri" in (cfg.get("tech_stack") or "")
+    if is_tauri:
+        marketplaces["superpowers-marketplace"] = {
+            "source": {
+                "source": "github",
+                "repo": "obra/superpowers-marketplace"
+            }
+        }
+        enabled["rust-analyzer-lsp@claude-plugins-official"] = True
+
+    Path(settings_path).write_text(json.dumps({
+        "extraKnownMarketplaces": marketplaces,
+        "enabledPlugins": enabled
     }, indent=2) + "\n", encoding="utf-8")
-    ok(".claude/settings.json (plugin: project@niklas-marketplace)")
+
+    if is_tauri:
+        ok(".claude/settings.json (plugins: project@niklas-marketplace, rust-analyzer-lsp@claude-plugins-official)")
+    else:
+        ok(".claude/settings.json (plugin: project@niklas-marketplace)")
 
 def create_github_workflow(cfg):
     """Write .github/workflows/changelog-check.yml into the generated project."""

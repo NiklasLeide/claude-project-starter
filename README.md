@@ -60,6 +60,9 @@ The plugin (`project@niklas-marketplace`) provides:
 - Slash commands — /project:brief, :status, :decide, :review, :log, :scope, :init, :resume, :parkhere
 - Sub-agents — dod-reviewer (sprint close verification), code-researcher (tactical API research)
 - SessionStart hook — DoD reminder at every session start
+- Universal MCPs — Context7 (up-to-date library docs via `npx`), GitHub (remote HTTP, auth via `${GITHUB_TOKEN}`)
+
+Tauri projects also get `rust-analyzer-lsp@claude-plugins-official` (from `superpowers-marketplace`) declared in their generated `.claude/settings.json` — non-Tauri projects do not.
 
 ## GitHub labels created
 
