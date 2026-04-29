@@ -42,7 +42,7 @@ Known issues and solutions. Check here before debugging. Add here when you fix s
 2. Replace the `cat` command with something that writes to a known log (e.g. `date >> /tmp/claude-hook.log`) to verify the hook actually fires — isolates "hook not firing" from "stdout not surfacing".
 3. Check Claude Code docs/release notes for whether plugin-provided SessionStart stdout is currently piped to the transcript (may differ from project-local `.claude/settings.json` hooks).
 4. If the hook fires but stdout is suppressed, consider switching to an `additionalContext` or `systemMessage` output type per hook schema instead of plain command stdout.
-**Status:** Tracked as a v1.0.3 work item. Plugin is otherwise functional — slash commands, sub-agents, marketplace updates all work.
+**Status:** Abandoned by design (v1.1.2). DoD enforcement consolidated at sprint close via the `dod-reviewer` sub-agent (final task in every sprint plan). The hook layer was dropped entirely — three layers (hook reminder, per-commit DoD, sprint-close DoD) created ambiguity, and the sprint-close layer is the one that actually catches gaps. Plugin v1.1.2 has no `hooks/` directory.
 
 ---
 

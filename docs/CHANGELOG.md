@@ -5,6 +5,7 @@ Types: `feat` | `fix` | `refactor` | `docs` | `chore` | `perf`
 
 ---
 
+[2026-04-29] docs: note plugin v1.1.2 — SessionStart hook layer dropped (never reliably fired); DoD reframed in shared-conventions as sprint-close only, enforced via dod-reviewer sub-agent. Closes the v1.0.3 hook investigation as abandoned-by-design.
 [2026-04-19] docs: Sprint 5 follow-up — `github-mcp-server` v1.0.0 binary installed on Windows in parallel; both platforms ready.
 [2026-04-19] chore: close Sprint 5 — plugin v1.1.1 ships Context7 + GitHub MCPs as universal defaults; Tauri preset owns rust-analyzer-lsp; user settings cleaned.
 [2026-04-19] fix: plugin v1.1.1 — GitHub MCP switched from remote HTTP to local binary-stdio (`github-mcp-server stdio`, PAT via `GITHUB_PERSONAL_ACCESS_TOKEN`). Remote endpoint `api.githubcopilot.com/mcp/` requires OAuth with Dynamic Client Registration, which Claude Code's MCP client doesn't support. Adds prereq: install `github-mcp-server` binary on PATH per machine (Linuxbrew / release tarball / Windows zip).
