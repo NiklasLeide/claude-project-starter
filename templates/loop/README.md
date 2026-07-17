@@ -14,10 +14,45 @@ Aesthetic judgment is never a stop condition.
 
 | File | Purpose |
 |---|---|
+| `run-loop.sh` | The v3 standard loop orchestrator (see "The v3 loop" below). |
 | `lib.js` | State + cost engine (Node — floats live here). Fail-closed on anything unparsable. |
 | `guards.sh` | Source-able bash guards. Every loop entrypoint sources this. |
-| `loop.env.example` | Budget/branch/cap configuration template. |
+| `loop.env.example` | Budget/branch/model/cap configuration template. |
+| `prompts/worker-draft.md` | Draft-worker prompt skeleton — fill in the `{{PLACEHOLDERS}}` per task. |
+| `prompts/worker-fix.md` | Fix-worker prompt skeleton — the orchestrator appends validator findings. |
+| `validate-example.js` | Working example validator (derivation/coverage/structure/scope). Copy + adapt per loop. |
 | `test-guards.sh` | Guard test suite. Run it green before trusting any loop. |
+
+## The v3 loop (run-loop.sh)
+
+```
+INIT -> DRAFT -> VERIFY -> [FIX -> RE-VERIFY] -> SYMMETRY* -> DELIVER
+        1 call   $0, grep   1 call    $0                       .loop/report.md
+        expensive first     cheap
+```
+
+One draft by the expensive model (`LOOP_MODEL_DRAFT`), deterministic
+verification FIRST (validators, zero tokens), at most ONE fix round by the
+cheap model (`LOOP_MODEL_FIX`) against the exact findings, deterministic
+re-verification. Findings that survive the fix round go to the report and
+`.loop/issue-draft.md` for a human — never to more model rounds, and the
+loop never lets one model judge another. `SYMMETRY` is a no-op placeholder
+until MÅL 4.
+
+Every model call is wrapped in: wall-clock gate, task budget gate, step
+budget gate (all BEFORE the call), transient-only retry, fail-closed cost
+ingest, and the HEAD-guard (self-heal + one redo; two tampers fail the
+task). The loop never commits — the human (or an outer wrapper) commits
+after reading `.loop/report.md`. Prompts instruct workers to fetch the
+SPECIFIC listed resources and chunk large documents (compact sessions:
+each step is its own `claude -p` call).
+
+Testing without cost: point `LOOP_CLAUDE_BIN` at a stub that prints
+`total_cost_usd` JSON — that is exactly what guard test 14 does.
+
+Orchestrator-level exit codes on top of the contract below: `1` =
+delivered with unresolved validator findings (report + issue draft
+written), `2` = model call failed hard (non-limit).
 
 ## Exit-code contract
 
@@ -66,8 +101,10 @@ validators should emit violations in one of these line formats (or set
 `check-scope-conflict` escalates (exit 6) when the same key fails two
 iterations in a row — that deadlock is a human decision, not a retry.
 
-## Delivery conventions (enforced by the loop wrapper, MÅL 3)
+## Delivery conventions (enforced by run-loop.sh)
 
 The loop never commits per iteration. PR is the delivery unit, an issue is
-the error channel, and no run ends silently. Deterministic verification
-first (grep against raw sources, zero tokens), then ONE model fix round.
+the error channel, and no run ends silently: every exit path writes
+`.loop/report.md` (per-step cost, validator outcome, remaining findings,
+incidents). Deterministic verification first (grep against raw sources,
+zero tokens), then ONE model fix round.

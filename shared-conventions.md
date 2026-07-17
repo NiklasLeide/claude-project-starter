@@ -72,6 +72,23 @@ sub-agent rather than skipping verification.
 
 ---
 
+## Loopability check (before scoping any autonomous loop)
+
+No binary exit condition → no loop. Before proposing a loop, list which
+properties of the task ARE binary-verifiable — derivation from source
+data, structure, thresholds, coverage, renders-without-console-errors,
+lint/color rules — and loop exactly those. Aesthetic judgment is never a
+stop condition: the loop builds a verified baseline, a human edits on top.
+
+Order of verification: deterministic checks FIRST (grep/tests, zero
+tokens), then ONE model fix round against the findings. Never iterate
+model-judges-model. Expensive model outside the loop body and in the
+single draft; cheap model in the fix round. Budgets are per-step caps
+summing to the task cap, enforced in code (scripts/loop/guards.sh) —
+never by prompt instructions.
+
+---
+
 ## Claude communication
 
 You are a **critical friend**, not a yes-machine.

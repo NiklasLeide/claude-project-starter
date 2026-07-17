@@ -171,6 +171,76 @@ else
   echo "  SKIP  commit.sh not found (set COMMIT_SH=/path/to/commit.sh)"
 fi
 
+echo "── 14. run-loop.sh: full v3 dry-run with stubbed claude ──"
+LREPO="$TMP/loop-repo"
+mkdir -p "$LREPO/scripts/loop/prompts"
+cp "$SCRIPT_DIR/lib.js" "$SCRIPT_DIR/guards.sh" "$SCRIPT_DIR/run-loop.sh" "$LREPO/scripts/loop/"
+cp "$SCRIPT_DIR/prompts/worker-draft.md" "$SCRIPT_DIR/prompts/worker-fix.md" "$LREPO/scripts/loop/prompts/"
+cd "$LREPO"
+git init -q -b loop-v3
+git config user.email test@example.com
+git config user.name "Guard Test"
+echo base > base.txt && git add -A && git commit -qm base
+HEAD0=$(git rev-parse HEAD)
+
+# Deterministic scratch validator: target.txt must contain exactly VALID
+cat > validate.js <<'VEOF'
+const fs = require('fs');
+let t = ''; try { t = fs.readFileSync('target.txt', 'utf8').trim(); } catch (e) {}
+if (t !== 'VALID') { console.log('- target.txt: content is not VALID'); process.exit(1); }
+console.log('OK');
+VEOF
+
+# Stubbed claude: draft model writes a defect, fix model corrects it. Logs
+# every call. STUB_TAMPER=1 additionally commits (rogue worker). Prints the
+# cost JSON the orchestrator ingests — a whole run costs $0.
+cat > stub-claude <<'SEOF'
+#!/bin/bash
+model=""
+while [[ $# -gt 0 ]]; do [[ "$1" == "--model" ]] && model="$2"; shift; done
+echo "call model=$model" >> calls.log
+if [[ "$model" == "draft-model" ]]; then echo WRONG > target.txt
+elif [[ "$model" == "fix-model" ]]; then echo VALID > target.txt; fi
+if [[ "${STUB_TAMPER:-0}" == "1" ]]; then
+  git add -A >/dev/null 2>&1 && git commit -qm "stub rogue commit" >/dev/null 2>&1
+fi
+echo "{\"total_cost_usd\": ${STUB_COST:-0.50}, \"result\": \"ok\", \"session_id\": \"stub\", \"modelUsage\": {\"$model\": 1}}"
+SEOF
+chmod +x stub-claude
+
+loop_env=(LOOP_CLAUDE_BIN="$LREPO/stub-claude" LOOP_BRANCH=loop-v3
+  LOOP_VALIDATE_CMD="node validate.js"
+  LOOP_MODEL_DRAFT=draft-model LOOP_MODEL_FIX=fix-model
+  LOOP_STATE_FILE="$LREPO/.loop/state.json" LOOP_INCIDENT_LOG="$LREPO/.loop/incidents.log")
+
+# 14a. Happy path: draft -> verify(fail) -> ONE fix -> re-verify(green) -> deliver
+rc=0
+env "${loop_env[@]}" LOOP_BUDGET_USD=25.00 LOOP_STEP_DRAFT_USD=18.00 LOOP_STEP_FIX_USD=7.00 \
+  bash scripts/loop/run-loop.sh >/dev/null 2>&1 || rc=$?
+check "v3 run delivers green (rc=0)" 0 $rc
+[[ "$(cat calls.log)" == $'call model=draft-model\ncall model=fix-model' ]] \
+  && pass "step order held: one draft call, then one fix call" \
+  || fail "step order wrong: $(tr '\n' ';' < calls.log)"
+[[ "$(cat target.txt 2>/dev/null)" == "VALID" ]] && pass "fix round corrected the deliverable" || fail "deliverable not corrected"
+[[ -f .loop/report.md ]] && pass "report written" || fail "report missing"
+grep -q '| DRAFT | 0.5000 | ok |' .loop/report.md && grep -q '| FIX | 0.5000 | ok |' .loop/report.md \
+  && pass "per-step costs in report" || fail "per-step costs missing in report"
+[[ "$(git rev-parse HEAD)" == "$HEAD0" ]] && pass "git log unchanged after run" || fail "loop touched git history"
+
+# 14b. step_budget_gate stops a step: tampering draft costs more than its
+# cap — the redo attempt must be blocked BEFORE the second paid call.
+rm -rf .loop calls.log target.txt
+rc=0
+env "${loop_env[@]}" STUB_TAMPER=1 STUB_COST=6.00 \
+  LOOP_BUDGET_USD=25.00 LOOP_STEP_DRAFT_USD=5.00 LOOP_STEP_FIX_USD=7.00 \
+  bash scripts/loop/run-loop.sh >/dev/null 2>&1 || rc=$?
+check "over-cap step stopped by step_budget_gate (rc=3)" 3 $rc
+[[ "$(wc -l < calls.log)" -eq 1 ]] && pass "no second paid call after cap" || fail "redo call was paid despite cap"
+[[ "$(git rev-parse HEAD)" == "$HEAD0" ]] && pass "tamper self-healed: git log unchanged" || fail "rogue commit survived"
+grep -q 'budget_stop' .loop/report.md 2>/dev/null && pass "budget stop reported" || fail "budget stop not reported"
+grep -q 'TAMPER' .loop/incidents.log 2>/dev/null && pass "tamper incident logged" || fail "tamper incident missing"
+cd "$REPO"
+
 echo
 echo "════════════════════════════════════════"
 echo " PASS: $PASS   FAIL: $FAIL"

@@ -556,14 +556,17 @@ def create_loop_tooling(cfg):
     import stat as stat_mod
     dest = Path(cfg["target_dir"]) / "scripts" / "loop"
     dest.mkdir(parents=True, exist_ok=True)
-    for f in sorted(src.iterdir()):
+    # Recursive: subdirectories (prompts/) ship with the library too
+    for f in sorted(src.rglob("*")):
         if not f.is_file():
             continue
-        target = dest / f.name
+        rel = f.relative_to(src)
+        target = dest / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(f.read_text(encoding="utf-8"), encoding="utf-8")
         if f.suffix == ".sh":
             target.chmod(target.stat().st_mode | stat_mod.S_IEXEC | stat_mod.S_IXGRP | stat_mod.S_IXOTH)
-        ok(f"scripts/loop/{f.name}")
+        ok(f"scripts/loop/{rel}")
     ok("Loop guardrails installed — verify with: bash scripts/loop/test-guards.sh")
 
 def create_plugin_settings(cfg):
