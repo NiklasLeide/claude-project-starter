@@ -1,7 +1,7 @@
 # Project Status — claude-project-starter
 
-> **Last updated:** 2026-07-17
-> **Current focus:** MÅL 2 — loop guardrail library (PR open; awaiting review, manual Windows check, goal closure)
+> **Last updated:** 2026-07-18
+> **Current focus:** MÅL 2 closed — MÅL 3 (v3 templates) brief next
 
 ---
 
@@ -10,7 +10,7 @@
 | # | Goal | Done when | Depends on | Status |
 |---|------|-----------|------------|--------|
 | 1 | Goal-based workflow (kit + plugin v1.2.0) | See MÅL 1 below | — | ✅ |
-| 2 | Loop guardrail library (`templates/loop/`) | See MÅL 2 below | 1 | 🔶 PR open |
+| 2 | Loop guardrail library (`templates/loop/`) | See MÅL 2 below | 1 | ✅ |
 
 ---
 
@@ -52,7 +52,7 @@
 - [x] `./commit.sh` in a repo without `src/` stages docs changes and prints what was staged (guard test 13; root commit.sh + both generator templates fixed)
 - [x] `grep -ri "SessionStart" README.md new_project.py` → 0 hits
 - [x] DEC-007 logged (executable templates as real files, amending DEC-002) with rejected alternative
-- [ ] Run DoD review (goal closure) — after merge, use dod-reviewer sub-agent
+- [x] Run DoD review (goal closure) — dod-reviewer ran 2026-07-18: all Done-when + DoD items ✓, GOAL READY TO CLOSE
 
 ---
 
