@@ -22,14 +22,14 @@
 **Depends on:** —
 
 **Done when:**
-- [ ] Generated PROJECT_STATUS.md has a `## Goals` table with Done-when column; scratch project greps 0 hits for "sprint"
-- [ ] `grep -ri sprint` over kit `.md`/`.py` files gives 0 hits outside changelog/status history
-- [ ] Plugin shared-conventions has §"Goal closure"; §"Sprint closure" is gone
-- [ ] `dod-reviewer` verifies Done-when conditions and answers GOAL READY TO CLOSE / GOAL NOT CLOSEABLE
-- [ ] Plugin v1.2.0 published in marketplace; val26 `/plugin` shows v1.2.0 and `/project:scope` produces goal format (human check)
-- [ ] Kit's own PROJECT_STATUS.md forward section is goal-based (sprint history kept as history)
-- [ ] New DEC logged with decision + rejected alternatives
-- [ ] Run DoD review (goal closure) — use dod-reviewer sub-agent
+- [x] Generated PROJECT_STATUS.md has a `## Goals` table with Done-when column; scratch project greps 0 hits for "sprint"
+- [x] `grep -ri sprint` over kit `.md`/`.py` files gives 0 hits outside changelog/status history
+- [x] Plugin shared-conventions has §"Goal closure"; §"Sprint closure" is gone
+- [x] `dod-reviewer` verifies Done-when conditions and answers GOAL READY TO CLOSE / GOAL NOT CLOSEABLE
+- [ ] Plugin v1.2.0 published in marketplace ✓ (commit 043fe1b pushed); **remaining human check:** val26 `/plugin` shows v1.2.0 and `/project:scope` produces goal format. Note: val26 has `autoUpdate: false` for the marketplace — update the plugin manually via `/plugin`.
+- [x] Kit's own PROJECT_STATUS.md forward section is goal-based (sprint history kept as history)
+- [x] New DEC logged with decision + rejected alternatives
+- [x] Run DoD review (goal closure) — use dod-reviewer sub-agent
 
 ---
 
