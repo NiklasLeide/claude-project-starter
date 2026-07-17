@@ -493,7 +493,7 @@ Add cases specific to this project's domain. Include worked examples where possi
 
 ## Monitoring process (Bevakningsprocess)
 
-This section defines scheduled monitoring. It is the basis for the Sprint 6 Routine that runs this methodology automatically.
+This section defines scheduled monitoring. It is the basis for the monitoring routine (see MÅL 6) that runs this methodology automatically.
 
 Monitoring steps:
 1. Check for new authoritative source material per [FILL IN — e.g., "per policy area", "per tracked entity"]
@@ -672,7 +672,7 @@ Every data structure change gets a migration. Bump schema version with every mig
 - Says "done" before verifying — always run tests/type-check before declaring done
 - Burns tokens on planning when task is already scoped — just execute
 - Creates giant files (>300 lines) — propose a split before implementing
-- Drifts from visual specs over multiple sprints — use design tokens file as code
+- Drifts from visual specs over multiple goals — use design tokens file as code
 """)
 
     # ── DECISIONS.md ───────────────────────────────────────────
@@ -711,55 +711,36 @@ Record of key decisions made during the project. **Newest first.**
 # Project Status — {p}
 
 > **Last updated:** {today}
-> **Current sprint:** Sprint 0 – Setup
-> **Sprint dates:** {today} → TBD
+> **Current focus:** Goal 0 – Setup
 
 ---
 
-## Current Sprint: Sprint 0 – Setup
+## Goals
+
+| # | Goal | Done when | Depends on | Status |
+|---|------|-----------|------------|--------|
+| 0 | Setup | Repo builds; docs generated; initial commit pushed | — | ⬜ |
+
+---
+
+## Goal 0 — Setup
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 0.1 | Define first feature | ⬜ Todo | |
-| 0.2 | Create first GitHub issue | ⬜ Todo | |
-| 0.3 | Run DoD review for this sprint | ⬜ Todo | Use dod-reviewer sub-agent |
-
-**Status legend:** ⬜ Todo | 🔄 In Progress | ✅ Done | 🚫 Blocked | ⏸️ Paused
+| 0.1 | Verify scaffold + first build | ⬜ Todo | |
+| 0.2 | Fill in CLAUDE.md TBDs | ⬜ Todo | |
+| 0.3 | Run DoD review (goal closure) | ⬜ Todo | Use dod-reviewer sub-agent |
 
 ---
 
-## What's Working Now
-_Nothing yet — fill this in as components come online._
+## Goal backlog (not yet refined)
 
-```bash
-# Add runnable commands here as they become available
-# e.g.: python main.py    ← starts the app
-```
+- [Goal name] — one-line outcome. Refine with /project:scope before starting.
 
 ---
 
 ## Blockers
-_None_
-
----
-
-## Sprint Backlog
-
-### Sprint 1 – [Name] (Target: TBD)
-- [ ] [Feature/task]
-
-### Sprint 2 – [Name] (Target: TBD)
-- [ ] [Feature/task]
-
----
-
-## Key Metrics to Track
-<!-- What does "working" actually mean for this project? Define it here. -->
-- TBD
-
----
-> Update this at the **end** of each Claude Code session, not the beginning.
-> Move completed tasks to ✅ Done. Keep Blockers current.
+- _None_
 """)
 
     # ── TROUBLESHOOTING.md ─────────────────────────────────────
@@ -853,14 +834,14 @@ Types: `feat` | `fix` | `refactor` | `docs` | `chore` | `perf`
 
 > Keep this honest. If something's not happening, move it to Deferred — don't leave it rotting in Next.
 
-## Now (Sprint 0 — Setup)
+## Now (Goal 0 — Setup)
 - [ ] Define first feature
 - [ ] Get to a working "hello world" end-to-end
 
-## Sprint 1 — [Name]
+## Goal 1 — [Name]
 - [ ] [Feature]
 
-## Sprint 2 — [Name]
+## Goal 2 — [Name]
 - [ ] [Feature]
 
 ## Later / Stretch

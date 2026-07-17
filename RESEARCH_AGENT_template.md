@@ -179,7 +179,7 @@ Add cases specific to this project's domain. Include worked examples where possi
 
 ## Monitoring process (Bevakningsprocess)
 
-This section defines scheduled monitoring. It is the basis for the Sprint 6 Routine that runs this methodology automatically.
+This section defines scheduled monitoring. It is the basis for the monitoring routine (see MÅL 6) that runs this methodology automatically.
 
 Monitoring steps:
 1. Check for new authoritative source material per [FILL IN — e.g., "per policy area", "per tracked entity"]

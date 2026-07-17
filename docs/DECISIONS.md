@@ -18,6 +18,12 @@ Record of key decisions made during the project. **Newest first.**
 
 ---
 
+### DEC-006: Goals replace sprints as the unit of work
+**Date:** 2026-07-17
+**Decision:** The kit and the `project` plugin (v1.2.0) define work as **goals** with four mandatory fields — Outcome, Done when (binary verifiable conditions), Budget, Depends on. No sprints, no timeboxes. "Sprint closure" becomes "Goal closure": the `dod-reviewer` sub-agent verifies the goal's Done-when list plus the DoD checklist and answers GOAL READY TO CLOSE / GOAL NOT CLOSEABLE. Next goal is picked by friction reduction per effort. Decided in chat 2026-07-17; see `MÅL.md` in the Claude project "Development Project management" and the val26 handoff.
+**Reasoning:** Sprint cadence was ceremony without benefit for a solo developer — sprint numbering and dates carried no information, and "sprint scope" was a weaker verification target than explicit binary Done-when conditions. Goals make closure machine-checkable and let priorities shift without re-planning a timebox.
+**Alternatives considered:** Continued sprints (rejected — timebox ceremony adds friction, verification stays fuzzy); hybrid model with sprints wrapping goals (rejected — two units of work create ambiguity about which closure ritual applies; one enforcement point is the whole idea)
+
 ### DEC-005: Tauri projects default to Windows filesystem
 **Date:** 2026-03-23
 **Decision:** When stack preset 6 (Tauri) is selected, default project directory is `/mnt/c/Users/nikla/projects/` instead of `~/projects/`

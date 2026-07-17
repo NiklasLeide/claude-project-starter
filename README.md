@@ -45,7 +45,7 @@ your-project/
 ├── commit.sh                    ← enforced commit workflow
 ├── docs/
 │   ├── DECISIONS.md             ← ADR log (the WHY)
-│   ├── PROJECT_STATUS.md        ← current sprint + blockers
+│   ├── PROJECT_STATUS.md        ← goals + blockers
 │   ├── TROUBLESHOOTING.md       ← issues + fixes
 │   ├── CHANGELOG.md             ← what changed + when
 │   └── ROADMAP.md               ← features, prioritized
@@ -56,9 +56,9 @@ your-project/
 ```
 
 The plugin (`project@niklas-marketplace`) provides:
-- `shared-conventions.md` — commit rule, DoD, sprint closure, communication, brief format
+- `shared-conventions.md` — commit rule, DoD, goal closure, communication, brief format
 - Slash commands — /project:brief, :status, :decide, :review, :log, :scope, :init, :resume, :parkhere
-- Sub-agents — dod-reviewer (sprint close verification), code-researcher (tactical API research)
+- Sub-agents — dod-reviewer (goal closure verification), code-researcher (tactical API research)
 - SessionStart hook — DoD reminder at every session start
 - Universal MCPs — Context7 (up-to-date library docs via `npx`), GitHub (remote HTTP, auth via `${GITHUB_TOKEN}`)
 
@@ -114,9 +114,9 @@ syncs it automatically on startup.
 
 **Plugin-based conventions:** Shared conventions, slash commands, sub-agents, and hooks live in a centralized plugin. Updating the plugin version propagates improvements to all projects — no manual file copying.
 
-**Enforceable sprint closure:** Every sprint plan ends with a "Run DoD review" task. The `dod-reviewer` sub-agent verifies Definition of Done for the sprint scope — code works, tests pass, CHANGELOG updated. Sprints cannot be marked complete with open gaps.
+**Enforceable goal closure:** Work is defined as goals with binary Done-when conditions. The final Done-when item of every goal is "Run DoD review (goal closure)" — the `dod-reviewer` sub-agent verifies each condition plus the DoD checklist. Goals cannot be closed with open gaps.
 
-**Layered enforcement:** `commit.sh` blocks commits without CHANGELOG updates. The GitHub Action blocks PRs with the same rule. The SessionStart hook reminds Claude of the DoD at every session. The sprint closure task catches anything that slipped through.
+**Layered enforcement:** `commit.sh` blocks commits without CHANGELOG updates. The GitHub Action blocks PRs with the same rule. The goal closure review catches anything that slipped through.
 
 ## First session
 

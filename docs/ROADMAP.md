@@ -16,7 +16,7 @@
 ## Next
 - [ ] Add stack presets as new project types emerge
 - [ ] Template refinements based on lessons from real projects
-- [ ] Consider adding a `/project:retro` slash command for sprint retrospectives
+- [ ] Consider adding a `/project:retro` slash command for goal retrospectives
 
 ## Later / Stretch
 - [ ] Interactive stack-specific setup (e.g. auto-run `npm init` for Node projects)
