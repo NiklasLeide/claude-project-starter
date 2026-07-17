@@ -5,6 +5,9 @@ Types: `feat` | `fix` | `refactor` | `docs` | `chore` | `perf`
 
 ---
 
+[2026-07-17] feat: MÅL 2 — loop guardrail library in templates/loop/ (lib.js state+cost fail-closed engine, guards.sh with budget/step/wall-clock/iteration gates, HEAD-guard self-heal + incident log + two strikes, branch/sandbox guards, mtime-scoped limit detection, transient-only retry, resume guard, detached launch schtasks/setsid, 1M-context pin) + test-guards.sh suite (47 checks); new_project.py installs opt-in as scripts/loop/. Generalized from val26's production loops.
+[2026-07-17] fix: commit.sh (root + both generator templates) — git add -A with staged-file reporting; old root version silently staged NOTHING in repos without src/ (missing-pathspec abort was swallowed). Never stages silently again.
+[2026-07-17] docs: drop stale SessionStart-hook mentions in README and new_project.py finish screen (hook layer removed in plugin v1.1.2); DEC-007 logged (executable templates as real files, amends DEC-002)
 [2026-07-17] goal: målomställning closed — kit + plugin v1.2.0 goal-based; dod-reviewer verified all Done-when conditions, val26 pilot confirmed
 [2026-07-17] template: goal-based workflow (MÅL 1) — PROJECT_STATUS/ROADMAP/RESEARCH_AGENT templates and shared-conventions define work as goals (Outcome / Done when / Budget / Depends on) instead of sprints; §Sprint closure → §Goal closure; plugin bumped to v1.2.0 in niklas-marketplace
 [2026-07-17] docs: DEC-006 logged (goals replace sprints); kit's own PROJECT_STATUS forward section goal-based, sprint history kept as history

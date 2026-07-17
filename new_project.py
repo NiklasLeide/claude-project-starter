@@ -233,6 +233,9 @@ def collect_info():
     # Research agent
     research_agent = ask("Does this project need a domain research agent? (y/n):").lower() == "y"
 
+    # Loop guardrails
+    loop_tooling = ask("Add loop guardrail tooling (scripts/loop/) for autonomous verified loops? (y/n):").lower() == "y"
+
     # Summary
     print(f"\n{C.CYAN}{C.BOLD}── Summary ────────────────────────────────{C.RESET}")
     print(f"  Name:        {project_name}")
@@ -245,6 +248,8 @@ def collect_info():
         print(f"  Milestone:   {milestone_name}")
     if research_agent:
         print(f"  Research:    RESEARCH_AGENT.md will be generated")
+    if loop_tooling:
+        print(f"  Loops:       scripts/loop/ guardrails will be installed")
     print(f"{C.CYAN}{C.BOLD}───────────────────────────────────────────{C.RESET}")
 
     confirm = ask("Looks good? (y/n):").lower()
@@ -265,6 +270,7 @@ def collect_info():
         "create_board": create_board,
         "milestone_name": milestone_name,
         "research_agent": research_agent,
+        "loop_tooling": loop_tooling,
         "today": datetime.date.today().isoformat(),
     }
 
@@ -303,7 +309,7 @@ def create_structure(cfg):
 '''#!/bin/bash
 # commit.sh — enforced commit workflow
 # Usage: ./commit.sh "your commit message"
-# Stages all tracked/new files (relies on .gitignore). Blocks commit if CHANGELOG not updated with src/ changes.
+# Stages all tracked/new files (relies on .gitignore) and prints what was staged. Blocks commit if CHANGELOG not updated with src/ changes.
 
 set -e
 
@@ -313,8 +319,16 @@ fi
 
 git add -A
 
-SRC_CHANGED=$(git diff --cached --name-only | grep "^src/" || true)
-CHANGELOG_CHANGED=$(git diff --cached --name-only | grep "CHANGELOG.md" || true)
+STAGED=$(git diff --cached --name-only)
+if [ -z "$STAGED" ]; then
+  echo "commit.sh: nothing to commit — no changes staged."
+  exit 0
+fi
+echo "commit.sh: staged:"
+echo "$STAGED" | sed 's/^/  - /'
+
+SRC_CHANGED=$(echo "$STAGED" | grep "^src/" || true)
+CHANGELOG_CHANGED=$(echo "$STAGED" | grep "CHANGELOG.md" || true)
 
 if [ -n "$SRC_CHANGED" ] && [ -z "$CHANGELOG_CHANGED" ]; then
   echo "ERROR: src/ changed but CHANGELOG.md was not updated. Update it first."
@@ -525,6 +539,32 @@ Monitoring steps:
 - Act as critical friend — challenge interpretations, suggest nuances
 - Be transparent about methodology behind every judgment
 """)
+
+def create_loop_tooling(cfg):
+    """Copy the loop guardrail library (templates/loop/) into the project (opt-in).
+
+    Real files, not inline strings: executable bash/js templates are kept as
+    files in templates/loop/ so the kit can run its own guard test suite and
+    escaping stays sane (see DEC-007). Requires the full kit repo clone."""
+    if not cfg.get("loop_tooling"):
+        return
+    header("Loop guardrail tooling")
+    src = Path(__file__).resolve().parent / "templates" / "loop"
+    if not src.is_dir():
+        warn("templates/loop/ not found next to new_project.py — skipping. Clone the full starter kit repo to include loop tooling.")
+        return
+    import stat as stat_mod
+    dest = Path(cfg["target_dir"]) / "scripts" / "loop"
+    dest.mkdir(parents=True, exist_ok=True)
+    for f in sorted(src.iterdir()):
+        if not f.is_file():
+            continue
+        target = dest / f.name
+        target.write_text(f.read_text(encoding="utf-8"), encoding="utf-8")
+        if f.suffix == ".sh":
+            target.chmod(target.stat().st_mode | stat_mod.S_IEXEC | stat_mod.S_IXGRP | stat_mod.S_IXOTH)
+        ok(f"scripts/loop/{f.name}")
+    ok("Loop guardrails installed — verify with: bash scripts/loop/test-guards.sh")
 
 def create_plugin_settings(cfg):
     """Write .claude/settings.json declaring plugins. Adds stack-specific plugins for Tauri (rust-analyzer-lsp)."""
@@ -1139,8 +1179,8 @@ def finish(cfg):
 
 {C.BOLD}Plugin:{C.RESET}
   {C.CYAN}project@niklas-marketplace{C.RESET}
-  Provides: shared conventions, slash commands, sub-agents (dod-reviewer,
-  code-researcher), SessionStart hook (DoD reminder)
+  Provides: shared conventions (goal closure), slash commands, sub-agents
+  (dod-reviewer, code-researcher)
 
 {C.BOLD}Automation:{C.RESET}
   {C.CYAN}.github/workflows/changelog-check.yml{C.RESET}  Blocks PRs if src/ changed without CHANGELOG
@@ -1189,7 +1229,7 @@ def update_project(target_dir):
 '''#!/bin/bash
 # commit.sh — enforced commit workflow
 # Usage: ./commit.sh "your commit message"
-# Stages all tracked/new files (relies on .gitignore). Blocks commit if CHANGELOG not updated with src/ changes.
+# Stages all tracked/new files (relies on .gitignore) and prints what was staged. Blocks commit if CHANGELOG not updated with src/ changes.
 
 set -e
 
@@ -1199,8 +1239,16 @@ fi
 
 git add -A
 
-SRC_CHANGED=$(git diff --cached --name-only | grep "^src/" || true)
-CHANGELOG_CHANGED=$(git diff --cached --name-only | grep "CHANGELOG.md" || true)
+STAGED=$(git diff --cached --name-only)
+if [ -z "$STAGED" ]; then
+  echo "commit.sh: nothing to commit — no changes staged."
+  exit 0
+fi
+echo "commit.sh: staged:"
+echo "$STAGED" | sed 's/^/  - /'
+
+SRC_CHANGED=$(echo "$STAGED" | grep "^src/" || true)
+CHANGELOG_CHANGED=$(echo "$STAGED" | grep "CHANGELOG.md" || true)
 
 if [ -n "$SRC_CHANGED" ] && [ -z "$CHANGELOG_CHANGED" ]; then
   echo "ERROR: src/ changed but CHANGELOG.md was not updated. Update it first."
@@ -1230,6 +1278,7 @@ def main():
         create_structure(cfg)
         create_docs(cfg)
         create_research_agent(cfg)
+        create_loop_tooling(cfg)
         create_plugin_settings(cfg)
         create_github_workflow(cfg)
         init_git(cfg)

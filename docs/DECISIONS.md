@@ -18,6 +18,12 @@ Record of key decisions made during the project. **Newest first.**
 
 ---
 
+### DEC-007: Executable templates ship as real files, not inline strings
+**Date:** 2026-07-17
+**Decision:** The loop guardrail library lives as real files in `templates/loop/` which `new_project.py` copies into projects (like `commit.sh` behavior), amending DEC-002's "all templates as Python strings in one file" to cover document templates only.
+**Reasoning:** Executable bash/js as Python string literals means escaping pain and — decisively — the kit could not run its own guard test suite. As real files, `bash templates/loop/test-guards.sh` runs green in the kit repo itself before any project inherits the guards. Trade-off: the single-file distribution promise of DEC-002 no longer holds for loop tooling; `create_loop_tooling()` degrades gracefully (warn + skip) when `templates/` is missing.
+**Alternatives considered:** Inline strings per DEC-002 (untestable in-kit, unreadable escaping); a separate loops repo (yet another thing to version and clone; the kit is the natural home).
+
 ### DEC-006: Goals replace sprints as the unit of work
 **Date:** 2026-07-17
 **Decision:** The kit and the `project` plugin (v1.2.0) define work as **goals** with four mandatory fields — Outcome, Done when (binary verifiable conditions), Budget, Depends on. No sprints, no timeboxes. "Sprint closure" becomes "Goal closure": the `dod-reviewer` sub-agent verifies the goal's Done-when list plus the DoD checklist and answers GOAL READY TO CLOSE / GOAL NOT CLOSEABLE. Next goal is picked by friction reduction per effort. Decided in chat 2026-07-17; see `MÅL.md` in the Claude project "Development Project management" and the val26 handoff.

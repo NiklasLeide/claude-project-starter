@@ -59,7 +59,6 @@ The plugin (`project@niklas-marketplace`) provides:
 - `shared-conventions.md` — commit rule, DoD, goal closure, communication, brief format
 - Slash commands — /project:brief, :status, :decide, :review, :log, :scope, :init, :resume, :parkhere
 - Sub-agents — dod-reviewer (goal closure verification), code-researcher (tactical API research)
-- SessionStart hook — DoD reminder at every session start
 - Universal MCPs — Context7 (up-to-date library docs via `npx`), GitHub (remote HTTP, auth via `${GITHUB_TOKEN}`)
 
 Tauri projects also get `rust-analyzer-lsp@claude-plugins-official` (from `superpowers-marketplace`) declared in their generated `.claude/settings.json` — non-Tauri projects do not.
@@ -112,11 +111,13 @@ syncs it automatically on startup.
 
 **Decision trail:** DECISIONS.md logs what you chose AND what you rejected. The rejected alternatives are the valuable part.
 
-**Plugin-based conventions:** Shared conventions, slash commands, sub-agents, and hooks live in a centralized plugin. Updating the plugin version propagates improvements to all projects — no manual file copying.
+**Plugin-based conventions:** Shared conventions, slash commands, and sub-agents live in a centralized plugin. Updating the plugin version propagates improvements to all projects — no manual file copying.
 
 **Enforceable goal closure:** Work is defined as goals with binary Done-when conditions. The final Done-when item of every goal is "Run DoD review (goal closure)" — the `dod-reviewer` sub-agent verifies each condition plus the DoD checklist. Goals cannot be closed with open gaps.
 
 **Layered enforcement:** `commit.sh` blocks commits without CHANGELOG updates. The GitHub Action blocks PRs with the same rule. The goal closure review catches anything that slipped through.
+
+**Loop guardrails (opt-in):** `scripts/loop/` ships code-enforced guards for autonomous Claude loops — budget caps checked before every call, fail-closed cost parsing, HEAD-guard with self-healing tamper handling, mtime-scoped limit detection, semantic exit codes, detached launch, resume guard — plus a test suite (`test-guards.sh`) that simulates every failure mode. Enforcement in code, not configuration: proven in val26's production loops (July 2026).
 
 ## First session
 
