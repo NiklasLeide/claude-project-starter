@@ -18,6 +18,12 @@ Record of key decisions made during the project. **Newest first.**
 
 ---
 
+### DEC-008: v3 loop model routing defaults — Opus drafts, Haiku fixes
+**Date:** 2026-07-18
+**Decision:** `run-loop.sh` defaults to `LOOP_MODEL_DRAFT=claude-opus-4-8` and `LOOP_MODEL_FIX=claude-haiku-4-5-20251001`, both overridable per loop via `loop.env`. The expensive model makes the single draft; the cheap model runs the one fix round against exact validator findings.
+**Reasoning:** In a single-draft pattern the draft carries all the quality — that is where model capability pays. The fix round is mechanical (a list of deterministic findings with the source of truth cited), which a cheap model handles; the pilot confirmed the asymmetry (Opus draft passed validators on the first try, $0.15). Env routing keeps the choice per loop, not per fork of the script.
+**Alternatives considered:** Same mid-tier model for both steps (val26's pattern — rejected: pays mid-tier price for a mechanical fix step and under-invests in the draft, which the v3 pattern cannot iterate on); premium tier (Fable/Mythos) as default draft (rejected: cost not justified as a *template default*; individual loops can override when a task warrants it).
+
 ### DEC-007: Executable templates ship as real files, not inline strings
 **Date:** 2026-07-17
 **Decision:** The loop guardrail library lives as real files in `templates/loop/` which `new_project.py` copies into projects (like `commit.sh` behavior), amending DEC-002's "all templates as Python strings in one file" to cover document templates only.

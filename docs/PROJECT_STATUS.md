@@ -1,7 +1,7 @@
 # Project Status — claude-project-starter
 
 > **Last updated:** 2026-07-18
-> **Current focus:** MÅL 2 closed — MÅL 3 (v3 templates) brief next
+> **Current focus:** MÅL 3 closed — FRYSREGELN gäller: mallen körs skarpt på ett riktigt projekt innan MÅL 4–6 öppnas
 
 ---
 
@@ -11,6 +11,7 @@
 |---|------|-----------|------------|--------|
 | 1 | Goal-based workflow (kit + plugin v1.2.0) | See MÅL 1 below | — | ✅ |
 | 2 | Loop guardrail library (`templates/loop/`) | See MÅL 2 below | 1 | ✅ |
+| 3 | v3 standard loop template (`run-loop.sh` + plugin v1.3.0) | See MÅL 3 below | 2 | ✅ |
 
 ---
 
@@ -56,9 +57,30 @@
 
 ---
 
+## MÅL 3 — v3 standard loop template
+
+**Outcome:** The kit ships the v3 loop as its standard template on top of the MÅL 2 guardrail library: `templates/loop/run-loop.sh` (single draft → deterministic verify → ONE fix round → deterministic re-verify → deliver), prompt skeletons, a working example validator, model cost routing via env, Loopability check in the plugin conventions (v1.3.0), and a live pilot run proven within budget.
+
+**Budget:** One focused local session + $5 cap for the live pilot.
+
+**Depends on:** MÅL 2.
+
+**Done when:**
+- [x] Scratch project with loop tooling = yes contains `scripts/loop/run-loop.sh`, `prompts/` (both skeletons) and `validate-example.js`; with no, `scripts/loop/` is absent — verified 2026-07-18 by driving `create_loop_tooling()` both ways
+- [x] `test-guards.sh` green in the kit repo AND in the generated scratch project, including case 14 (58 checks)
+- [x] Case 14 (dry-run with `LOOP_CLAUDE_BIN` stub): step order held (one draft, then one fix), `step_budget_gate` stops an over-cap step before the second paid call, report written, `git log` unchanged after the run
+- [x] Plugin shared-conventions contains §"Loopability check"; `/project:scope` mentions the check for loop-executed goals; v1.3.0 pushed (e669be5) and `claude plugin list` shows project@niklas-marketplace 1.3.0 after `claude plugin update`
+- [x] Pilot run: `docs/STACKS.md` generated and validator-green (9 presets derived, none missing, scope clean), total $0.154175 ≤ $5.00, per-step costs in `.loop/report.md`, HEAD untouched by the loop (commit a3d56da made outside the loop body)
+- [x] `grep -riE "dubbelutkast|double.draft|diverge" templates/` → 0 hits
+- [x] DEC-008 logged (model routing defaults) with rejected alternatives
+- [x] Run DoD review (goal closure) — dod-reviewer ran 2026-07-18: all Done-when + DoD items ✓, GOAL READY TO CLOSE
+
+---
+
 ## Goal backlog (not yet refined)
-- MÅL 3 — v3 templates. Defined in `MÅL.md`.
 - MÅL 6 — monitoring routine (formerly "Sprint 6 — Routines"). Runs the RESEARCH_AGENT monitoring methodology automatically.
+
+> FRYSREGELN (from the MÅL 3 brief): the v3 template must be run for real on an actual project before MÅL 4–6 are opened.
 
 ---
 
