@@ -1,7 +1,7 @@
 # Project Status — claude-project-starter
 
 > **Last updated:** 2026-07-17
-> **Current focus:** MÅL 1 – Goal-based workflow (målomställning)
+> **Current focus:** MÅL 1 closed — next goal not yet picked (see goal backlog)
 
 ---
 
@@ -9,7 +9,7 @@
 
 | # | Goal | Done when | Depends on | Status |
 |---|------|-----------|------------|--------|
-| 1 | Goal-based workflow (kit + plugin v1.2.0) | See MÅL 1 below | — | ⬜ |
+| 1 | Goal-based workflow (kit + plugin v1.2.0) | See MÅL 1 below | — | ✅ |
 
 ---
 
@@ -26,7 +26,7 @@
 - [x] `grep -ri sprint` over kit `.md`/`.py` files gives 0 hits outside changelog/status history
 - [x] Plugin shared-conventions has §"Goal closure"; §"Sprint closure" is gone
 - [x] `dod-reviewer` verifies Done-when conditions and answers GOAL READY TO CLOSE / GOAL NOT CLOSEABLE
-- [ ] Plugin v1.2.0 published in marketplace ✓ (commit 043fe1b pushed); **remaining human check:** val26 `/plugin` shows v1.2.0 and `/project:scope` produces goal format. Note: val26 has `autoUpdate: false` for the marketplace — update the plugin manually via `/plugin`.
+- [x] Plugin v1.2.0 published in marketplace (commit 043fe1b pushed); val26 `/plugin` shows v1.2.0 and `/project:scope` produces goal format — confirmed by Niklas 2026-07-17
 - [x] Kit's own PROJECT_STATUS.md forward section is goal-based (sprint history kept as history)
 - [x] New DEC logged with decision + rejected alternatives
 - [x] Run DoD review (goal closure) — use dod-reviewer sub-agent
