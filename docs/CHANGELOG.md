@@ -5,6 +5,7 @@ Types: `feat` | `fix` | `refactor` | `docs` | `chore` | `perf`
 
 ---
 
+[2026-07-18] fix: guards.sh detached_launch — gate the schtasks branch on a real Windows bash (uname MINGW*/MSYS*/CYGWIN*); WSL2 interop exposes schtasks.exe on PATH and hijacked the branch, failing closed instead of using setsid. Windows/schtasks branch manually verified via Git Bash; result in TROUBLESHOOTING.
 [2026-07-17] feat: MÅL 2 — loop guardrail library in templates/loop/ (lib.js state+cost fail-closed engine, guards.sh with budget/step/wall-clock/iteration gates, HEAD-guard self-heal + incident log + two strikes, branch/sandbox guards, mtime-scoped limit detection, transient-only retry, resume guard, detached launch schtasks/setsid, 1M-context pin) + test-guards.sh suite (47 checks); new_project.py installs opt-in as scripts/loop/. Generalized from val26's production loops.
 [2026-07-17] fix: commit.sh (root + both generator templates) — git add -A with staged-file reporting; old root version silently staged NOTHING in repos without src/ (missing-pathspec abort was swallowed). Never stages silently again.
 [2026-07-17] docs: drop stale SessionStart-hook mentions in README and new_project.py finish screen (hook layer removed in plugin v1.1.2); DEC-007 logged (executable templates as real files, amends DEC-002)

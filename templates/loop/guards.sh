@@ -199,7 +199,10 @@ detached_launch() {
   # fallback nohup+disown. Monitor with: tail -f <logFile>
   local script="$1" log="$2" task_name="${3:-loop-detached}"
   mkdir -p "$(dirname "$log")"
-  if command -v schtasks.exe >/dev/null 2>&1; then
+  # schtasks only from a real Windows bash (MINGW/MSYS/Cygwin) — WSL2 sees
+  # schtasks.exe via interop but pwd -W/cygpath/// are Git Bash-only there.
+  case "$(uname -s)" in MINGW*|MSYS*|CYGWIN*) local win_bash=1;; *) local win_bash=0;; esac
+  if [[ "$win_bash" == 1 ]] && command -v schtasks.exe >/dev/null 2>&1; then
     local repo bash_exe inner
     repo="$(pwd -W 2>/dev/null || pwd)"
     bash_exe="$(cygpath -w "$(command -v bash)" 2>/dev/null || echo 'C:\Program Files\Git\bin\bash.exe')"

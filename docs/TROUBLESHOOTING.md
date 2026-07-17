@@ -58,6 +58,14 @@ Known issues and solutions. Check here before debugging. Add here when you fix s
 **Cause:** Complex `wsl bash -c` commands with unescaped `(`, `)`, and `|` characters get parsed by cmd.exe as batch syntax before WSL receives them.
 **Solution:** Use simple `wsl ls` calls in `for /f` loops instead of complex bash one-liners. Deduplicate in batch with `seen_` variables.
 
+### detached_launch takes the schtasks branch under WSL2
+**Symptom:** `test-guards.sh` check 11 ("detached launch survives its parent") fails on WSL2 — the detached worker never starts, launch fails closed.
+**Cause:** WSL2's Windows interop puts `schtasks.exe` on PATH, so `command -v schtasks.exe` succeeds and `detached_launch` took the Windows branch. That branch uses Git Bash-only constructs (`pwd -W`, `cygpath`, `//`-style flags) which don't work under WSL2, so every Windows method failed and the function returned fail-closed instead of falling through to `setsid`.
+**Solution:** Gate the schtasks branch on `uname -s` matching `MINGW*|MSYS*|CYGWIN*` in addition to `schtasks.exe` existing (`templates/loop/guards.sh`, 2026-07-18). WSL2 now falls through to setsid as the comment always intended. 47/47 green after the fix.
+
+### Windows/schtasks branch of detached_launch — manual verification result (MÅL 2)
+**Verified 2026-07-18** via Windows Git Bash (MINGW64_NT-10.0-26200), invoked from WSL2 interop at Niklas's direction. `detached_launch` on the C: drive took the schtasks branch: one-shot task created and run (`schtasks //Create` + `//Run`), the launching shell exited, and the detached worker survived and wrote its marker ~2 s later. Scheduled task and temp dir cleaned up afterwards. The fallback `cmd start /b` path was not exercised (schtasks succeeded on first try).
+
 ### `requests` module not installed
 **Symptom:** GitHub setup fails with ImportError.
 **Cause:** `requests` is not in Python's standard library.

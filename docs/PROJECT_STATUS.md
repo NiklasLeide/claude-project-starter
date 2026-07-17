@@ -46,7 +46,7 @@
 - [x] Scratch project with loop tooling = yes has complete `scripts/loop/`; with no, the directory is absent
 - [x] `test-guards.sh` green in the kit repo AND in a generated scratch project (47 checks: fail-closed exit 4, budget gate before calls, per-step caps, HEAD-guard self-heal + incident log + two strikes, branch/sandbox guards, mtime-scoped limit detection, retry never touches semantic codes, resume guard, scope-conflict escalation)
 - [x] Detached launch survives parent death — Linux/setsid branch, automated test
-- [ ] Detached launch Windows/schtasks branch verified manually once; result noted in TROUBLESHOOTING (Niklas, post-merge)
+- [x] Detached launch Windows/schtasks branch verified manually once; result noted in TROUBLESHOOTING — verified 2026-07-18 via Windows Git Bash at Niklas's direction (see TROUBLESHOOTING)
 - [x] `scripts/loop/README.md` documents the exit-code contract (table) and the guard catalog
 - [x] Loop entrypoints export `CLAUDE_CODE_DISABLE_1M_CONTEXT=1` (guard test 12)
 - [x] `./commit.sh` in a repo without `src/` stages docs changes and prints what was staged (guard test 13; root commit.sh + both generator templates fixed)
