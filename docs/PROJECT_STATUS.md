@@ -1,7 +1,7 @@
 # Project Status — claude-project-starter
 
 > **Last updated:** 2026-07-17
-> **Current focus:** MÅL 1 closed — next goal not yet picked (see goal backlog)
+> **Current focus:** MÅL 2 — loop guardrail library (PR open; awaiting review, manual Windows check, goal closure)
 
 ---
 
@@ -10,6 +10,7 @@
 | # | Goal | Done when | Depends on | Status |
 |---|------|-----------|------------|--------|
 | 1 | Goal-based workflow (kit + plugin v1.2.0) | See MÅL 1 below | — | ✅ |
+| 2 | Loop guardrail library (`templates/loop/`) | See MÅL 2 below | 1 | 🔶 PR open |
 
 ---
 
@@ -33,9 +34,29 @@
 
 ---
 
-## Goal backlog (not yet refined)
+## MÅL 2 — Loop guardrail library
 
-- MÅL 2 — loop scripts / guardrails. Defined in `MÅL.md` (Claude project "Development Project management"). Brief after MÅL 1 closes.
+**Outcome:** The kit ships a generalized, project-agnostic loop guardrail library (`templates/loop/`: lib.js, guards.sh, loop.env.example, test-guards.sh, README.md) installed opt-in by `new_project.py` as `scripts/loop/`, so the next loop never reinvents val26's guards. Includes two backlog fixes: commit.sh silent staging and stale SessionStart mentions.
+
+**Budget:** One focused session (built in Cowork cloud, delivered as PR).
+
+**Depends on:** MÅL 1.
+
+**Done when:**
+- [x] Scratch project with loop tooling = yes has complete `scripts/loop/`; with no, the directory is absent
+- [x] `test-guards.sh` green in the kit repo AND in a generated scratch project (47 checks: fail-closed exit 4, budget gate before calls, per-step caps, HEAD-guard self-heal + incident log + two strikes, branch/sandbox guards, mtime-scoped limit detection, retry never touches semantic codes, resume guard, scope-conflict escalation)
+- [x] Detached launch survives parent death — Linux/setsid branch, automated test
+- [ ] Detached launch Windows/schtasks branch verified manually once; result noted in TROUBLESHOOTING (Niklas, post-merge)
+- [x] `scripts/loop/README.md` documents the exit-code contract (table) and the guard catalog
+- [x] Loop entrypoints export `CLAUDE_CODE_DISABLE_1M_CONTEXT=1` (guard test 12)
+- [x] `./commit.sh` in a repo without `src/` stages docs changes and prints what was staged (guard test 13; root commit.sh + both generator templates fixed)
+- [x] `grep -ri "SessionStart" README.md new_project.py` → 0 hits
+- [x] DEC-007 logged (executable templates as real files, amending DEC-002) with rejected alternative
+- [ ] Run DoD review (goal closure) — after merge, use dod-reviewer sub-agent
+
+---
+
+## Goal backlog (not yet refined)
 - MÅL 3 — v3 templates. Defined in `MÅL.md`.
 - MÅL 6 — monitoring routine (formerly "Sprint 6 — Routines"). Runs the RESEARCH_AGENT monitoring methodology automatically.
 
