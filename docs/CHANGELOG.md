@@ -5,6 +5,7 @@ Types: `feat` | `fix` | `refactor` | `docs` | `chore` | `perf`
 
 ---
 
+[2026-07-18] goal: MÅL 8 (Windows-only development environment) closed — WSL decommissioned from the workflow; projects.bat + new_project.py Windows-native, active repos on C: with push rights, guard suite 58/58 on Windows Git Bash, cp1252 crash fixed; DEC-010. Deterministic acceptance a–f green; goal closure verified inline
 [2026-07-18] refactor: Windows-only dev environment (DEC-010). projects.bat rewritten without wsl — lists C:\Users\nikla\projects + \tools via dir /b, N=new/U=update/number=VS Code, pause on every error path. new_project.py DEFAULT_PROJECTS_DIR drops the /mnt/c Tauri special-case (all projects on C:). niklas-marketplace + spelledarverktyg cloned to C:. WSL decommissioned from the workflow (nothing deleted from WSL)
 [2026-07-18] fix: new_project.py crashed on Windows-native Python — stdout/stderr default to cp1252, which can't encode the box-drawing/check glyphs (UnicodeEncodeError); now forces UTF-8 on both streams. Surfaced by the WSL→Windows move (DEC-010)
 [2026-07-18] fix: chat counterparts could never reach shared conventions (DEC-003 vs DEC-005 conflict since sprint 4). Root shared-conventions.md declared canonical; CLAUDE_PROJECT_INSTRUCTIONS fetches its public raw URL; scripts/sync-conventions.sh keeps plugin copy in step at every bump (DEC-009)

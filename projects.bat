@@ -1,7 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
 
-:: projects.bat — Windows-native project launcher (no WSL).
+:: projects.bat — Windows-native project launcher.
 :: Lists project folders under %USERPROFILE%\projects and %USERPROFILE%\tools,
 :: then: number = open in VS Code, N = new project, U = update a project.
 :: Every error path calls pause so the window never blinks-and-dies.
