@@ -1,50 +1,37 @@
 @echo off
 setlocal enabledelayedexpansion
 
+:: projects.bat — Windows-native project launcher (no WSL).
+:: Lists project folders under %USERPROFILE%\projects and %USERPROFILE%\tools,
+:: then: number = open in VS Code, N = new project, U = update a project.
+:: Every error path calls pause so the window never blinks-and-dies.
+
 echo.
 echo  === Projects ===
 echo.
 
 set i=0
 
-:: Collect from ~/projects/
-for /f "tokens=*" %%d in ('wsl ls ~/projects/ 2^>nul') do (
-    set /a i+=1
-    set "proj[!i!]=%%d"
-    set "path[!i!]=~/projects/%%d"
-    set "seen_%%d=1"
-    echo   !i!. %%d
-)
-
-:: Collect from /mnt/c/Users/nikla/projects/, skip duplicates
-for /f "tokens=*" %%d in ('wsl ls /mnt/c/Users/nikla/projects/ 2^>nul') do (
+:: Collect from %USERPROFILE%\projects
+for /f "delims=" %%d in ('dir /b /ad "%USERPROFILE%\projects" 2^>nul') do (
     if not defined seen_%%d (
         set /a i+=1
         set "proj[!i!]=%%d"
-        set "path[!i!]=/mnt/c/Users/nikla/projects/%%d"
+        set "path[!i!]=%USERPROFILE%\projects\%%d"
         set "seen_%%d=1"
         echo   !i!. %%d
     )
 )
 
-:: Collect from ~/tools/, skip duplicates
-for /f "tokens=*" %%d in ('wsl ls ~/tools/ 2^>nul') do (
+:: Collect from %USERPROFILE%\tools, skip duplicates
+for /f "delims=" %%d in ('dir /b /ad "%USERPROFILE%\tools" 2^>nul') do (
     if not defined seen_%%d (
         set /a i+=1
         set "proj[!i!]=%%d"
-        set "path[!i!]=~/tools/%%d"
+        set "path[!i!]=%USERPROFILE%\tools\%%d"
         set "seen_%%d=1"
         echo   !i!. %%d
     )
-)
-
-:: Add ~/lifecoach-app-repo as a named entry, skip if duplicate
-if not defined seen_lifecoach-app-repo (
-    set /a i+=1
-    set "proj[!i!]=lifecoach-app-repo"
-    set "path[!i!]=~/lifecoach-app-repo"
-    set "seen_lifecoach-app-repo=1"
-    echo   !i!. lifecoach-app-repo
 )
 
 if %i%==0 (
@@ -59,34 +46,37 @@ echo.
 set /p choice="Pick a number, N, or U: "
 
 if /i "%choice%"=="N" (
-    wsl -e bash -lic "newproject"
+    python "%~dp0new_project.py"
+    if errorlevel 1 pause
     exit /b
 )
 
 if /i "%choice%"=="U" goto :update
 
-:: Validate choice
-if %choice% LSS 1 goto :invalid
-if %choice% GTR %i% goto :invalid
-
-set "selected=!proj[%choice%]!"
+:: Numeric choice -> open in VS Code
+if not defined path[%choice%] goto :invalid
 set "selpath=!path[%choice%]!"
 echo.
-echo Opening %selected% in VS Code...
-wsl -e bash -c "code --new-window %selpath%"
+echo Opening !proj[%choice%]! in VS Code...
+code "!selpath!"
+if errorlevel 1 (
+    echo Failed to open VS Code ^(is 'code' on PATH?^).
+    pause
+)
 exit /b
 
 :update
 echo.
 set /p upick="Which project number to update? "
-if %upick% LSS 1 goto :invalid
-if %upick% GTR %i% goto :invalid
+if not defined path[%upick%] goto :invalid
 set "uppath=!path[%upick%]!"
 echo.
 echo Updating !proj[%upick%]!...
-wsl -e bash -lic "python3 ~/tools/claude-project-starter/new_project.py --update !uppath!"
+python "%~dp0new_project.py" --update "!uppath!"
+if errorlevel 1 pause
 exit /b
 
 :invalid
 echo Invalid choice.
+pause
 exit /b

@@ -1,7 +1,7 @@
 # Project Status — claude-project-starter
 
 > **Last updated:** 2026-07-18
-> **Current focus:** MÅL 3 closed — FRYSREGELN gäller: mallen körs skarpt på ett riktigt projekt innan MÅL 4–6 öppnas
+> **Current focus:** MÅL 8 — Windows-only dev environment (WSL decommissioned). One human check (bat→N→VS Code→claude→commit) remains before close. FRYSREGELN still gates MÅL 4–6.
 
 ---
 
@@ -12,6 +12,7 @@
 | 1 | Goal-based workflow (kit + plugin v1.2.0) | See MÅL 1 below | — | ✅ |
 | 2 | Loop guardrail library (`templates/loop/`) | See MÅL 2 below | 1 | ✅ |
 | 3 | v3 standard loop template (`run-loop.sh` + plugin v1.3.0) | See MÅL 3 below | 2 | ✅ |
+| 8 | Windows-only development environment | See MÅL 8 below | — | 🚧 |
 
 ---
 
@@ -74,6 +75,30 @@
 - [x] `grep -riE "dubbelutkast|double.draft|diverge" templates/` → 0 hits
 - [x] DEC-008 logged (model routing defaults) with rejected alternatives
 - [x] Run DoD review (goal closure) — dod-reviewer ran 2026-07-18: all Done-when + DoD items ✓, GOAL READY TO CLOSE
+
+---
+
+## MÅL 8 — Windows-only development environment
+
+**Outcome:** The entire kit workflow runs on clean Windows (Git Bash for
+scripts, `schtasks` for detached loops, `python` not `python3`); WSL2 can be
+shut down for good. Active repos live on the Windows filesystem with push
+rights; `projects.bat` and `new_project.py` carry no WSL paths or `wsl`
+invocations. Triggered by recurring WSL2 crashes that repeatedly took work
+(the DEC-009 convention fix among them).
+
+**Budget:** One local Claude Code session on Windows.
+
+**Depends on:** —
+
+**Done when:**
+- [x] WSL inventory reported — each WSL repo's uncommitted/unpushed state surfaced (the aborted DEC-009 fix in `~/tools/claude-project-starter`; no unpushed commits anywhere; all active work already on GitHub)
+- [x] Active repos on `C:` with push rights — `niklas-marketplace` + `spelledarverktyg` cloned; `git push --dry-run` clean for all five C: repos
+- [x] `projects.bat` contains no `wsl` — lists `C:\Users\nikla\projects` + `\tools` via `dir /b`, N/U/number, `pause` on every error path
+- [x] `new_project.py` generates on Windows and `test-guards.sh` is green (kit + generated scratch, 58 checks each) — surfaced and fixed a real Windows-only crash (cp1252 `UnicodeEncodeError`); `DEFAULT_PROJECTS_DIR` drops the `/mnt/c` Tauri special-case
+- [ ] **[Niklas]** End-to-end chain `projects.bat → N → VS Code → claude → commit` completes without WSL (interactive; single human check)
+- [x] DEC-010 logged with rejected alternatives
+- [ ] Run DoD review (goal closure) — dod-reviewer verifies Done-when + DoD
 
 ---
 

@@ -63,6 +63,8 @@ The plugin (`project@niklas-marketplace`) provides:
 
 Tauri projects also get `rust-analyzer-lsp@claude-plugins-official` (from `superpowers-marketplace`) declared in their generated `.claude/settings.json` — non-Tauri projects do not.
 
+**Plugin bump routine:** the root `shared-conventions.md` here is canonical (chat counterparts fetch it by raw URL). Before every plugin version bump, run `bash scripts/sync-conventions.sh <marketplace-path> --push-to-plugin` so the plugin ships the same text; the check mode (no flag) exits 1 on drift.
+
 ## GitHub labels created
 
 | Label | Color | Purpose |
@@ -130,19 +132,23 @@ claude
 # Claude will ask critical questions before writing code
 ```
 
-## Make it a global command (WSL2)
+## Make it a global command (Windows)
 
-```bash
-# Put the script somewhere permanent
-mkdir -p ~/tools/project-starter
-cp new_project.py ~/tools/project-starter/
+The kit lives at `C:\Users\nikla\tools\claude-project-starter`. Development is
+Windows-native (DEC-010) — scripts run under Git Bash, no WSL involved.
 
-# Add alias to ~/.bashrc
-echo 'alias newproject="python ~/tools/project-starter/new_project.py"' >> ~/.bashrc
-source ~/.bashrc
+The launcher is `projects.bat` (pin it to the taskbar or a Start-menu
+shortcut). It lists every project under `C:\Users\nikla\projects` and
+`C:\Users\nikla\tools`, then:
 
-# Now anywhere:
-newproject
+- a **number** opens that project in VS Code
+- **N** starts a new project (`python new_project.py`)
+- **U** updates a project (`python new_project.py --update <path>`)
+
+To run the generator directly:
+
+```bat
+python C:\Users\nikla\tools\claude-project-starter\new_project.py
 ```
 
 ## Lessons applied from the lifecoach project

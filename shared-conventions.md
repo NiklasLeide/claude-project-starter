@@ -2,7 +2,7 @@
 
 These apply to every project and every surface Claude runs on — local WSL2 CLI, local Windows CLI, desktop app, Claude Code on the web, and claude.ai chat. Project-specific overrides go in the project's root `CLAUDE.md`, not here.
 
-This file is committed to the repo at `.claude/shared-conventions.md` and referenced from `CLAUDE.md` via `@.claude/shared-conventions.md`.
+This copy — `shared-conventions.md` in the public `claude-project-starter` repo — is the **canonical source**. Claude chat counterparts fetch it via raw.githubusercontent.com (see `CLAUDE_PROJECT_INSTRUCTIONS.md`); Claude Code receives the same content through the `project` plugin (`niklas-marketplace`). Project repos do not carry a copy. `scripts/sync-conventions.sh` keeps the plugin copy in step at every plugin bump.
 
 ---
 

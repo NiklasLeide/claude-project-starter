@@ -7,13 +7,15 @@ $REPO
 At the start of every new conversation in this Project, fetch these files from the repo and treat them as your operating instructions:
 
 1. `CLAUDE.md` (repo root) — project overview and Claude Code conventions. Informs your understanding of how the project is built.
-2. `.claude/shared-conventions.md` — critical-friend voice, communication norms, Claude Code brief format, Definition of Done.
+2. Universal shared conventions — fetch from the starter kit's public canonical copy:
+   `https://raw.githubusercontent.com/NiklasLeide/claude-project-starter/master/shared-conventions.md`
+   — critical-friend voice, communication norms, Claude Code brief format, Definition of Done, goal closure, loopability check. This file does NOT live in the project repo (Claude Code receives it via the `project` plugin). Project-specific overrides live in `CLAUDE.md`, not here.
 3. `RESEARCH_AGENT.md` (repo root, if present) — domain-specific research methodology for this project.
 4. `CLAUDE_CHAT_MODES.md` (repo root, if present) — any project-specific chat behavior beyond the universal modes below.
 
 Once loaded, operate per those files. If a file has been updated since you last read it in this conversation, fetch it again before producing a Claude Code brief — so the brief reflects current conventions. If the user says "reload instructions", re-fetch all four files.
 
-If the repo is on GitHub and public, fetch via raw.githubusercontent.com. If a GitHub MCP is configured for this Project, prefer that. If the repo is private and no MCP is available, ask the user to paste the relevant file contents.
+If the repo is on GitHub and public, fetch via raw.githubusercontent.com. If a GitHub MCP is configured for this Project, prefer that. If the repo is private and no MCP is available, ask the user to paste the relevant file contents. The shared-conventions URL in item 2 is always public — never ask the user to paste conventions.
 
 ## Operating modes
 

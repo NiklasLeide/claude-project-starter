@@ -18,6 +18,18 @@ Record of key decisions made during the project. **Newest first.**
 
 ---
 
+### DEC-010: Windows-only development environment
+**Date:** 2026-07-18
+**Decision:** Development moves entirely to Windows-native tooling. Scripts run via Git Bash (`C:\Program Files\Git\bin\bash.exe`); detached loops use the `schtasks` branch already in `templates/loop/guards.sh`; `new_project.py` and `projects.bat` target the Windows filesystem (`C:\Users\nikla\projects` and `\tools`) with no `/mnt/c` special-cases or `wsl` calls. Active repos are cloned to `C:`. WSL2 is decommissioned from the workflow (nothing is deleted from WSL — that is a human decision).
+**Reasoning:** WSL2 crashed recurrently and repeatedly destroyed in-progress work (the DEC-009 convention fix was lost to one such crash before it was ever committed). Maintaining two environments also created a config-drift class of bug — code that worked on one filesystem broke on the other (e.g. `/mnt/c` paths, `python3` vs `python`, the cp1252 crash new_project.py hit the moment it ran on Windows). One environment removes both the crash exposure and the drift.
+**Alternatives considered:** Repair the WSL config (rejected — the crash class remains; the failure was in WSL itself, not our config, and every crash risks losing work again); keep the dual environment and just harden it (rejected — the config-drift class of bug persists as long as two filesystems and two Python conventions coexist).
+
+### DEC-009: Chat counterparts fetch conventions from the kit's public canonical copy
+**Date:** 2026-07-18
+**Decision:** The starter kit's root `shared-conventions.md` (public repo) is the canonical conventions source. `CLAUDE_PROJECT_INSTRUCTIONS.md` points every chat counterpart at its raw.githubusercontent.com URL. The plugin's copy (which reaches Claude Code) is kept identical via `scripts/sync-conventions.sh`, run at every plugin bump.
+**Reasoning:** DEC-003 (chat fetches conventions from the project repo) and DEC-005 (conventions moved into the private plugin) contradicted each other — every new project's chat counterpart was blocked on arrival and needed manual pasting. One public URL restores the chat leg with zero per-repo copies and zero new sync burden beyond the bump routine, enforced by script rather than memory.
+**Alternatives considered:** Copy the file into every project repo (reintroduces the N-repo sync burden DEC-005 killed); keep plugin-only (chat surfaces can never reach it); make the marketplace repo public (exposes the whole private plugin for one file).
+
 ### DEC-008: v3 loop model routing defaults — Opus drafts, Haiku fixes
 **Date:** 2026-07-18
 **Decision:** `run-loop.sh` defaults to `LOOP_MODEL_DRAFT=claude-opus-4-8` and `LOOP_MODEL_FIX=claude-haiku-4-5-20251001`, both overridable per loop via `loop.env`. The expensive model makes the single draft; the cheap model runs the one fix round against exact validator findings.

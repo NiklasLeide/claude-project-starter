@@ -16,6 +16,16 @@ import subprocess
 import datetime
 from pathlib import Path
 
+# Windows-native Python defaults stdout/stderr to cp1252, which cannot encode
+# the box-drawing and check-mark glyphs printed throughout this script — it
+# crashes with UnicodeEncodeError. Force UTF-8 on every platform. (WSL was
+# UTF-8 by default, which is why this only surfaced on the Windows-only move.)
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
+
 # ── Try to import requests, guide user if missing ──────────────
 try:
     import requests
@@ -25,8 +35,7 @@ except ImportError:
 
 # ── Config — edit these defaults ──────────────────────────────
 DEFAULT_GITHUB_USER = "niklasleide"
-DEFAULT_PROJECTS_DIR = str(Path.home() / "projects")
-WINDOWS_PROJECTS_DIR = "/mnt/c/Users/nikla/projects"
+DEFAULT_PROJECTS_DIR = str(Path.home() / "projects")  # Windows-native: C:\Users\nikla\projects
 
 # ── Stack presets ──────────────────────────────────────────────
 STACK_PRESETS = {
@@ -211,8 +220,8 @@ def collect_info():
     github_user_input = ask(f"GitHub username (Enter to use '{DEFAULT_GITHUB_USER}'):")
     github_user = github_user_input or DEFAULT_GITHUB_USER
 
-    # Target directory — Tauri projects go to Windows filesystem
-    projects_base = WINDOWS_PROJECTS_DIR if stack_choice == "6" else DEFAULT_PROJECTS_DIR
+    # Target directory — all projects live on the Windows filesystem now
+    projects_base = DEFAULT_PROJECTS_DIR
     default_dir = os.path.join(projects_base, project_name)
     dir_input = ask(f"Project directory (Enter for {default_dir}):")
     target_dir = dir_input or default_dir
